@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { getConversionFormula } from '@/utils/conversionUtils';
-import { Check, X, ChevronDown, ChevronUp, Copy } from 'lucide-react';
+import { Check, X, ChevronDown, ChevronUp, Copy, Calculator, ArrowDown } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { motion, AnimatePresence } from 'framer-motion';
@@ -29,12 +29,54 @@ const FormulaView: React.FC<FormulaViewProps> = ({
     navigator.clipboard.writeText(formula);
     toast.success("Formula copied to clipboard");
   };
+
+  // Calculate the steps of the conversion
+  const getConversionSteps = (): { description: string; value: number | string }[] => {
+    if (!areCompatible) return [];
+
+    // Example of steps for common conversions
+    if (fromUnit === 'meter' && toUnit === 'foot') {
+      return [
+        { description: "Starting value", value: fromValue },
+        { description: "Multiply by 3.28084", value: fromValue * 3.28084 },
+        { description: "Final result", value: toValue }
+      ];
+    }
+    
+    if (fromUnit === 'meter' && toUnit === 'inch') {
+      return [
+        { description: "Starting value", value: fromValue },
+        { description: "Multiply by 39.3701", value: fromValue * 39.3701 },
+        { description: "Final result", value: toValue }
+      ];
+    }
+    
+    if (fromUnit === 'kilogram' && toUnit === 'pound') {
+      return [
+        { description: "Starting value", value: fromValue },
+        { description: "Multiply by 2.20462", value: fromValue * 2.20462 },
+        { description: "Final result", value: toValue }
+      ];
+    }
+    
+    // Generic steps for other conversions
+    return [
+      { description: "Starting value", value: fromValue },
+      { description: "Apply conversion formula", value: formula },
+      { description: "Final result", value: toValue }
+    ];
+  };
+  
+  const conversionSteps = getConversionSteps();
   
   return (
     <div className="space-y-3">
       <Collapsible open={expanded} onOpenChange={setExpanded}>
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Conversion Formula</h3>
+          <div className="flex items-center gap-2">
+            <Calculator className="h-4 w-4 text-muted-foreground" />
+            <h3 className="text-sm font-medium">Conversion Formula</h3>
+          </div>
           <div className="flex items-center gap-2">
             {areCompatible ? (
               <div className="flex items-center text-green-500 text-xs">
@@ -81,24 +123,39 @@ const FormulaView: React.FC<FormulaViewProps> = ({
                   </div>
                   
                   <div className="mt-4 pt-2 border-t">
-                    <div className="text-xs font-medium mb-1">Step-by-step calculation:</div>
-                    <div className="space-y-1 text-xs">
-                      <div className="grid grid-cols-[1fr_auto] gap-2">
-                        <div>Input value:</div>
-                        <div className="font-mono">{fromValue}</div>
-                      </div>
-                      <div className="grid grid-cols-[1fr_auto] gap-2">
-                        <div>From unit:</div>
-                        <div className="font-mono">{fromUnit}</div>
-                      </div>
-                      <div className="grid grid-cols-[1fr_auto] gap-2">
-                        <div>To unit:</div>
-                        <div className="font-mono">{toUnit}</div>
-                      </div>
-                      <div className="grid grid-cols-[1fr_auto] gap-2">
-                        <div>Result:</div>
-                        <div className="font-mono">{toValue}</div>
-                      </div>
+                    <div className="text-xs font-medium mb-2 flex items-center justify-between">
+                      <span>Step-by-step calculation:</span>
+                      <span className="text-primary text-xs font-mono">{fromValue} → {toValue}</span>
+                    </div>
+                    <div className="space-y-2 text-xs">
+                      {conversionSteps.map((step, index) => (
+                        <motion.div 
+                          key={index}
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className={`p-2 rounded-md ${
+                            index === 0 ? 'bg-muted/70' : 
+                            index === conversionSteps.length - 1 ? 'bg-primary/10' : 
+                            'bg-muted/30'
+                          }`}
+                        >
+                          <div className="grid grid-cols-[auto_1fr_auto] gap-2 items-center">
+                            <div className="h-5 w-5 rounded-full bg-muted-foreground/20 flex items-center justify-center text-[10px] font-medium">
+                              {index + 1}
+                            </div>
+                            <div>{step.description}</div>
+                            <div className="font-mono font-medium">
+                              {typeof step.value === 'number' ? step.value.toFixed(4) : step.value}
+                            </div>
+                          </div>
+                          {index < conversionSteps.length - 1 && (
+                            <div className="flex justify-center my-1">
+                              <ArrowDown className="h-3 w-3 text-muted-foreground/50" />
+                            </div>
+                          )}
+                        </motion.div>
+                      ))}
                     </div>
                   </div>
                 </Card>
@@ -108,7 +165,7 @@ const FormulaView: React.FC<FormulaViewProps> = ({
         </AnimatePresence>
         
         {!expanded && (
-          <Card className="p-2 bg-muted/30 mt-2">
+          <Card className="p-2 bg-muted/30 mt-2 hover:bg-muted/40 transition-colors cursor-pointer" onClick={() => setExpanded(true)}>
             <div className="flex justify-between items-center text-xs">
               <span>Input: {fromValue} {fromUnit}</span>
               <span>→</span>
