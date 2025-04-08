@@ -46,22 +46,18 @@ const ConversionVisualizer: React.FC = () => {
   useEffect(() => {
     if (value && !isNaN(parseFloat(value))) {
       try {
-        // Check if units are compatible
         if (!areUnitsCompatible(fromUnit, toUnit)) {
           toast.error("Units are not compatible");
           return;
         }
         
-        // Calculate conversion
         const numericValue = parseFloat(value);
         const convertedValue = convert(numericValue, fromUnit, toUnit);
         setResult(convertedValue);
         
-        // Calculate relative scale for visualization
         const relativeScale = getRelativeScale(fromUnit, toUnit);
         setScale(relativeScale);
         
-        // Auto adjust zoom if needed
         if (autoScale) {
           const newZoom = calculateIdealZoom(relativeScale);
           setZoomLevel(newZoom);
@@ -75,7 +71,6 @@ const ConversionVisualizer: React.FC = () => {
     }
   }, [value, fromUnit, toUnit, dimension, autoScale]);
   
-  // Helper function to calculate ideal zoom level based on scale
   const calculateIdealZoom = (scale: number): number => {
     if (scale > 1000) return 0.01;
     if (scale > 100) return 0.1;
@@ -88,7 +83,6 @@ const ConversionVisualizer: React.FC = () => {
   
   const handleDimensionChange = (newDimension: 'length' | 'area' | 'volume') => {
     setDimension(newDimension);
-    // Reset units based on new dimension
     const defaultUnits = {
       length: { from: 'meter', to: 'foot' },
       area: { from: 'square-meter', to: 'square-foot' },
@@ -117,15 +111,12 @@ const ConversionVisualizer: React.FC = () => {
     return unit ? unit.abbreviation : id;
   };
   
-  // Calculate visual representation width
-  const fromBarWidth = 100; // Base width percentage
-  const toBarWidth = Math.min(Math.max((scale * 100 * zoomLevel), 5), 200); // Adjusted by scale and zoom
+  const fromBarWidth = 100;
+  const toBarWidth = Math.min(Math.max((scale * 100 * zoomLevel), 5), 200);
   
-  // Real-world examples data based on dimensions and selected units
   const getRealWorldExamples = () => {
     const examples: { name: string; size: number; unit: string; description: string }[] = [];
     
-    // Add examples based on dimension
     if (dimension === 'length') {
       examples.push(
         { name: 'Ant', size: 0.005, unit: 'meter', description: 'Average size of a worker ant' },
@@ -167,7 +158,6 @@ const ConversionVisualizer: React.FC = () => {
       );
     }
     
-    // Convert all examples to the user's currently selected units for better comprehension
     return examples.map(example => {
       try {
         const convertedSize = convert(example.size, example.unit, fromUnit);
@@ -177,7 +167,6 @@ const ConversionVisualizer: React.FC = () => {
           formattedSize: formatValue(convertedSize, 4)
         };
       } catch (error) {
-        // If conversion fails (incompatible units), return original
         return {
           ...example,
           sizeInSelectedUnit: null,
@@ -188,8 +177,7 @@ const ConversionVisualizer: React.FC = () => {
   };
   
   const realWorldExamples = getRealWorldExamples();
-
-  // Find closest example to the entered value
+  
   const findClosestExample = () => {
     if (!value || isNaN(parseFloat(value)) || !realWorldExamples.length) return null;
     
@@ -198,7 +186,6 @@ const ConversionVisualizer: React.FC = () => {
     
     if (validExamples.length === 0) return null;
     
-    // Find closest example by absolute difference
     return validExamples.reduce((closest, current) => {
       const currentDiff = Math.abs((current.sizeInSelectedUnit as number) - numericValue);
       const closestDiff = Math.abs((closest.sizeInSelectedUnit as number) - numericValue);
@@ -401,7 +388,6 @@ const ConversionVisualizer: React.FC = () => {
         </Card>
       </div>
       
-      {/* Real-world examples section */}
       <div className="pt-4 border-t">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-medium">Real-world Examples</h3>
@@ -418,7 +404,6 @@ const ConversionVisualizer: React.FC = () => {
         
         {showRealWorldExamples && (
           <div className="space-y-4">
-            {/* Closest example highlight */}
             {closestExample && (
               <Card className="p-3 border-primary/50 bg-primary/5 shadow-sm">
                 <div className="flex items-start justify-between">
@@ -436,7 +421,6 @@ const ConversionVisualizer: React.FC = () => {
               </Card>
             )}
             
-            {/* Examples visualization */}
             <div className="bg-muted/50 rounded-lg p-4 overflow-hidden">
               <div className="mb-3 text-sm text-center text-muted-foreground">
                 Sizes relative to your selected unit: {getUnitName(fromUnit)}
@@ -450,71 +434,72 @@ const ConversionVisualizer: React.FC = () => {
                     selected: { color: "hsl(var(--destructive))" }
                   }}
                 >
-                  {realWorldExamples
-                    .filter(ex => ex.sizeInSelectedUnit !== null)
-                    .sort((a, b) => (a.sizeInSelectedUnit as number) - (b.sizeInSelectedUnit as number))
-                    .slice(0, 10)
-                    .map((example, index) => {
-                      const isClosest = closestExample && closestExample.name === example.name;
-                      const isInRange = example.sizeInSelectedUnit !== null && 
-                                      ((example.sizeInSelectedUnit as number) >= parseFloat(value) * 0.1) && 
-                                      ((example.sizeInSelectedUnit as number) <= parseFloat(value) * 10);
+                  <>
+                    {realWorldExamples
+                      .filter(ex => ex.sizeInSelectedUnit !== null)
+                      .sort((a, b) => (a.sizeInSelectedUnit as number) - (b.sizeInSelectedUnit as number))
+                      .slice(0, 10)
+                      .map((example, index) => {
+                        const isClosest = closestExample && closestExample.name === example.name;
+                        const isInRange = example.sizeInSelectedUnit !== null && 
+                                        ((example.sizeInSelectedUnit as number) >= parseFloat(value) * 0.1) && 
+                                        ((example.sizeInSelectedUnit as number) <= parseFloat(value) * 10);
+                        
+                        return (
+                          <div 
+                            key={example.name}
+                            className="absolute left-0 transition-all duration-300"
+                            style={{
+                              bottom: `${(index / (realWorldExamples.filter(ex => ex.sizeInSelectedUnit !== null).length - 1)) * 100}%`,
+                              transform: `translateY(50%)`
+                            }}
+                          >
+                            <div className={`flex items-center gap-2 ${isClosest ? 'font-medium text-primary' : ''}`}>
+                              <div 
+                                className={`h-3 w-3 rounded-full ${
+                                  isClosest ? 'bg-primary ring-2 ring-primary/30' : 
+                                  isInRange ? 'bg-primary/70' : 'bg-muted-foreground/40'
+                                }`}
+                              />
+                              <div className="flex gap-1 items-baseline">
+                                <span className="font-medium">{example.name}</span>
+                                <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                  ({example.formattedSize} {getUnitAbbreviation(fromUnit)})
+                                </span>
+                              </div>
+                            </div>
+                            <motion.div 
+                              className={`h-1 bg-primary/30 mt-1 rounded-full ${isClosest ? 'bg-primary' : ''}`}
+                              initial={{ width: 0 }}
+                              animate={{ 
+                                width: Math.min(Math.max(
+                                  Math.log10((example.sizeInSelectedUnit as number) + 1) * 50, 
+                                  20
+                                ), 200) 
+                              }}
+                              transition={{ duration: 0.5, delay: index * 0.05 }}
+                            />
+                          </div>
+                        );
+                      })}
                       
-                      return (
+                      {value && !isNaN(parseFloat(value)) && (
                         <div 
-                          key={example.name}
-                          className="absolute left-0 transition-all duration-300"
+                          className="absolute left-0 w-full border-t border-dashed border-destructive/50 transition-all duration-300"
                           style={{
-                            bottom: `${(index / (realWorldExamples.filter(ex => ex.sizeInSelectedUnit !== null).length - 1)) * 100}%`,
-                            transform: `translateY(50%)`
+                            bottom: `${calculatePositionPercentage(parseFloat(value), 
+                              realWorldExamples
+                                .filter(ex => ex.sizeInSelectedUnit !== null)
+                                .map(ex => ex.sizeInSelectedUnit as number)
+                            )}%`,
                           }}
                         >
-                          <div className={`flex items-center gap-2 ${isClosest ? 'font-medium text-primary' : ''}`}>
-                            <div 
-                              className={`h-3 w-3 rounded-full ${
-                                isClosest ? 'bg-primary ring-2 ring-primary/30' : 
-                                isInRange ? 'bg-primary/70' : 'bg-muted-foreground/40'
-                              }`}
-                            />
-                            <div className="flex gap-1 items-baseline">
-                              <span className="font-medium">{example.name}</span>
-                              <span className="text-xs text-muted-foreground whitespace-nowrap">
-                                ({example.formattedSize} {getUnitAbbreviation(fromUnit)})
-                              </span>
-                            </div>
+                          <div className="absolute right-0 -top-3 bg-background px-1 text-xs text-destructive">
+                            Your value: {value} {getUnitAbbreviation(fromUnit)}
                           </div>
-                          <motion.div 
-                            className={`h-1 bg-primary/30 mt-1 rounded-full ${isClosest ? 'bg-primary' : ''}`}
-                            initial={{ width: 0 }}
-                            animate={{ 
-                              width: Math.min(Math.max(
-                                Math.log10((example.sizeInSelectedUnit as number) + 1) * 50, 
-                                20
-                              ), 200) 
-                            }}
-                            transition={{ duration: 0.5, delay: index * 0.05 }}
-                          />
                         </div>
-                      );
-                    })}
-                    
-                    {/* Current value indicator */}
-                    {value && !isNaN(parseFloat(value)) && (
-                      <div 
-                        className="absolute left-0 w-full border-t border-dashed border-destructive/50 transition-all duration-300"
-                        style={{
-                          bottom: `${calculatePositionPercentage(parseFloat(value), 
-                            realWorldExamples
-                              .filter(ex => ex.sizeInSelectedUnit !== null)
-                              .map(ex => ex.sizeInSelectedUnit as number)
-                          )}%`,
-                        }}
-                      >
-                        <div className="absolute right-0 -top-3 bg-background px-1 text-xs text-destructive">
-                          Your value: {value} {getUnitAbbreviation(fromUnit)}
-                        </div>
-                      </div>
-                    )}
+                      )}
+                  </>
                 </ChartContainer>
               </div>
               
@@ -545,20 +530,15 @@ const ConversionVisualizer: React.FC = () => {
     </div>
   );
   
-  // Helper function to calculate position percentage for the value marker
   function calculatePositionPercentage(value: number, allValues: number[]): number {
     if (allValues.length === 0) return 50;
     
-    // Add our value to the array for calculation
     const values = [...allValues, value].sort((a, b) => a - b);
     const index = values.indexOf(value);
     
-    // If the value is the smallest, position near bottom
     if (index === 0) return 5;
-    // If the value is the largest, position near top
     if (index === values.length - 1) return 95;
     
-    // Otherwise, calculate a position between adjacent examples
     return (index / (values.length - 1)) * 100;
   }
 };
