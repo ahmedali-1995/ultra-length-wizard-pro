@@ -27,7 +27,8 @@ import {
   ArrowRight, Maximize2, Minimize2, RefreshCcw, Info, 
   ArrowDown, ChevronUp, ChevronDown, Globe, Building, User,
   Microscope, Mountain, Landmark, Star, Map, Ruler,
-  Square, Box, Droplet, Home, ParkingCircle, Warehouse, Ship
+  Square, Box, Droplet, Home, ParkingCircle, Warehouse, Ship,
+  Image
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
@@ -36,6 +37,15 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from "@/components/ui/chart";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const ConversionVisualizer: React.FC = () => {
   const [dimension, setDimension] = useState<'length' | 'area' | 'volume'>('length');
@@ -47,6 +57,8 @@ const ConversionVisualizer: React.FC = () => {
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [autoScale, setAutoScale] = useState<boolean>(true);
   const [showRealWorldExamples, setShowRealWorldExamples] = useState<boolean>(true);
+  const [selectedExample, setSelectedExample] = useState<any>(null);
+  const [showExampleDialog, setShowExampleDialog] = useState<boolean>(false);
   
   useEffect(() => {
     if (value && !isNaN(parseFloat(value))) {
@@ -75,7 +87,7 @@ const ConversionVisualizer: React.FC = () => {
       setResult(null);
     }
   }, [value, fromUnit, toUnit, dimension, autoScale]);
-  
+
   const calculateIdealZoom = (scale: number): number => {
     if (scale > 1000) return 0.01;
     if (scale > 100) return 0.1;
@@ -115,7 +127,75 @@ const ConversionVisualizer: React.FC = () => {
     const unit = units.find(u => u.id === id);
     return unit ? unit.abbreviation : id;
   };
-  
+
+  const getExampleImage = (example: any, groupName: string): string => {
+    const imageMap: Record<string, string> = {
+      "Observable Universe": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&h=600&fit=crop",
+      "Andromeda Galaxy": "https://images.unsplash.com/photo-1543722530-d2c3201371e7?w=800&h=600&fit=crop",
+      "Earth to Sun": "https://images.unsplash.com/photo-1532628965632-a610654b9604?w=800&h=600&fit=crop",
+      "Earth's diameter": "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=800&h=600&fit=crop",
+      "Great Barrier Reef": "https://images.unsplash.com/photo-1582967788606-a171c1080cb0?w=800&h=600&fit=crop",
+      "Mount Everest": "https://images.unsplash.com/photo-1575728099259-7ea01d4de3f9?w=800&h=600&fit=crop",
+      "Golden Gate Bridge": "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&h=600&fit=crop",
+      "Eiffel Tower": "https://images.unsplash.com/photo-1543349689-9a4d426bee8e?w=800&h=600&fit=crop",
+      "Football field": "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=800&h=600&fit=crop",
+      "Swimming pool": "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=800&h=600&fit=crop",
+      "Car length": "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&h=600&fit=crop",
+      "Door height": "https://images.unsplash.com/photo-1531153432275-5d383a7fbbb4?w=800&h=600&fit=crop",
+      "Basketball": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&h=600&fit=crop",
+      "Smartphone": "https://images.unsplash.com/photo-1592434134753-a70baf7979d5?w=800&h=600&fit=crop",
+      "Credit card": "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&h=600&fit=crop",
+      "Ant": "https://images.unsplash.com/photo-1618605413929-6522d36b089d?w=800&h=600&fit=crop",
+      "Human hair": "https://images.unsplash.com/photo-1585751119414-b2e482e21740?w=800&h=600&fit=crop",
+      "DNA width": "https://images.unsplash.com/photo-1583318432730-a19c89692612?w=800&h=600&fit=crop",
+      
+      "Central Park": "https://images.unsplash.com/photo-1522083165195-3424ed129620?w=800&h=600&fit=crop",
+      "Manhattan": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&h=600&fit=crop",
+      "Lake Tahoe": "https://images.unsplash.com/photo-1548954042-c7fbac6be38d?w=800&h=600&fit=crop",
+      "New York City": "https://images.unsplash.com/photo-1496588152823-86ff7695e68f?w=800&h=600&fit=crop",
+      "Texas": "https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=800&h=600&fit=crop",
+      "United States": "https://images.unsplash.com/photo-1508433957232-3107f5fd5995?w=800&h=600&fit=crop",
+      "Earth's surface": "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=800&h=600&fit=crop",
+      "Tennis court": "https://images.unsplash.com/photo-1595413895318-b2c2b5497d52?w=800&h=600&fit=crop",
+      "Basketball court": "https://images.unsplash.com/photo-1505666287802-931dc83a5dc9?w=800&h=600&fit=crop",
+      
+      "Teaspoon": "https://images.unsplash.com/photo-1585032767761-878270336a0b?w=800&h=600&fit=crop",
+      "Shot glass": "https://images.unsplash.com/photo-1601061171392-8e4c938358a0?w=800&h=600&fit=crop",
+      "Cup": "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=800&h=600&fit=crop",
+      "Bottle of water": "https://images.unsplash.com/photo-1606076165784-C2f1eeaeec83?w=800&h=600&fit=crop",
+      "Microwave": "https://images.unsplash.com/photo-1574269910231-bc508bcb68d6?w=800&h=600&fit=crop",
+      "Refrigerator": "https://images.unsplash.com/photo-1536749730899-48a725b6fde2?w=800&h=600&fit=crop",
+      "Hot tub": "https://images.unsplash.com/photo-1520333789090-1afc82db536a?w=800&h=600&fit=crop",
+      "Shipping container": "https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=800&h=600&fit=crop",
+      "Great Lakes": "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800&h=600&fit=crop",
+      "Earth's oceans": "https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?w=800&h=600&fit=crop",
+      "Jupiter": "https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=800&h=600&fit=crop",
+      "Sun": "https://images.unsplash.com/photo-1575881875475-31023242e3f9?w=800&h=600&fit=crop",
+    };
+
+    if (imageMap[example.name]) {
+      return imageMap[example.name];
+    }
+
+    if (dimension === 'length') {
+      if (groupName === "Astronomical") return "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&h=600&fit=crop";
+      if (groupName === "Geographic") return "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=600&fit=crop";
+      if (groupName === "Human scale") return "https://images.unsplash.com/photo-1559825481-12a05cc00344?w=800&h=600&fit=crop";
+      return "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=800&h=600&fit=crop";
+    }
+    
+    if (dimension === 'area') {
+      if (groupName === "Large areas") return "https://images.unsplash.com/photo-1500964757637-c85e8a162699?w=800&h=600&fit=crop";
+      if (groupName === "Medium areas") return "https://images.unsplash.com/photo-1524813686514-a57563d77965?w=800&h=600&fit=crop";
+      return "https://images.unsplash.com/photo-1562619371-b67725b6fde2?w=800&h=600&fit=crop";
+    }
+    
+    if (groupName === "Massive volumes") return "https://images.unsplash.com/photo-1543722530-d2c3201371e7?w=800&h=600&fit=crop";
+    if (groupName === "Large volumes") return "https://images.unsplash.com/photo-1468276311594-df7cb65d8df6?w=800&h=600&fit=crop";
+    if (groupName === "Medium volumes") return "https://images.unsplash.com/photo-1565402170291-8491f14678db?w=800&h=600&fit=crop";
+    return "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?w=800&h=600&fit=crop";
+  };
+
   const fromBarWidth = 100;
   const toBarWidth = Math.min(Math.max((scale * 100 * zoomLevel), 5), 200);
   
@@ -374,6 +454,11 @@ const ConversionVisualizer: React.FC = () => {
       [groupName]: !prev[groupName]
     }));
   };
+
+  const handleExampleClick = (example: any) => {
+    setSelectedExample(example);
+    setShowExampleDialog(true);
+  };
   
   return (
     <div className="space-y-6">
@@ -585,7 +670,10 @@ const ConversionVisualizer: React.FC = () => {
         {showRealWorldExamples && (
           <div className="space-y-4">
             {closestExample && (
-              <Card className="p-3 border-primary/50 bg-primary/5 shadow-sm">
+              <Card 
+                className="p-3 border-primary/50 bg-primary/5 shadow-sm cursor-pointer hover:bg-primary/10 transition-colors"
+                onClick={() => handleExampleClick(closestExample)}
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
                     {getExampleIcon(closestExample, "")}
@@ -647,7 +735,8 @@ const ConversionVisualizer: React.FC = () => {
                                 return (
                                   <div 
                                     key={example.name}
-                                    className={`flex items-center justify-between p-2 rounded-md ${isClosest ? 'bg-primary/10 border border-primary/30' : 'hover:bg-muted/50'}`}
+                                    className={`flex items-center justify-between p-2 rounded-md ${isClosest ? 'bg-primary/10 border border-primary/30' : 'hover:bg-muted/50'} cursor-pointer`}
+                                    onClick={() => handleExampleClick(example)}
                                   >
                                     <div className="flex items-center gap-2">
                                       {getExampleIcon(example, group.name)}
@@ -673,6 +762,54 @@ const ConversionVisualizer: React.FC = () => {
           </div>
         )}
       </div>
+
+      <Dialog open={showExampleDialog} onOpenChange={setShowExampleDialog}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {selectedExample && (
+                <>
+                  {getExampleIcon(selectedExample, "")}
+                  {selectedExample.name}
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedExample?.description}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedExample && (
+            <div className="space-y-4">
+              <div className="overflow-hidden rounded-md border">
+                <AspectRatio ratio={4/3} className="bg-muted">
+                  <div className="relative w-full h-full">
+                    <img 
+                      src={getExampleImage(selectedExample, "")} 
+                      alt={selectedExample.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                </AspectRatio>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 bg-muted/50 rounded-md">
+                  <div className="text-sm font-medium">In {getUnitName(fromUnit)}</div>
+                  <div className="font-mono text-xl">{selectedExample.formattedSize} {getUnitAbbreviation(fromUnit)}</div>
+                </div>
+                
+                {result !== null && (
+                  <div className="p-3 bg-primary/5 rounded-md">
+                    <div className="text-sm font-medium">Compare to your input</div>
+                    <div className="font-mono text-xl">{value} {getUnitAbbreviation(fromUnit)}</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
