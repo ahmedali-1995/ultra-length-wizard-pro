@@ -15,7 +15,7 @@ const Index = () => {
       <Helmet>
         <title>UltraLength Wizard Pro - Advanced Length Converter Tool</title>
         <meta name="description" content="Convert between any length units with this advanced, user-friendly conversion tool. Support for metric, imperial, astronomical and ancient units." />
-        <meta name="keywords" content="length converter, unit converter, meter to feet, metric conversion, imperial units, distance calculator, measurement tool" />
+        <meta name="keywords" content="length converter, unit converter, meter to feet, metric conversion, imperial units, distance calculator, measurement tool, precise unit conversion, scientific measurement, length measurement" />
         <meta property="og:title" content="UltraLength Wizard Pro - Advanced Length Converter Tool" />
         <meta property="og:description" content="Convert between any length units with this advanced, user-friendly conversion tool." />
         <meta property="og:type" content="website" />
