@@ -26,7 +26,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        {/* Only render client components when on the client */}
+        {/* Only render Toaster when on the client */}
         {isMounted && <ClientOnlyToaster />}
         
         <Routes>

@@ -7,12 +7,15 @@ import { Toaster as Sonner } from "sonner";
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  // Don't try to access theme during SSR
-  const { theme = "light" } = useTheme();
+  // Use a default theme that won't cause hydration issues
+  const { theme = "light", mounted = false } = useTheme();
+  
+  // Only use the actual theme when mounted (client-side)
+  const actualTheme = mounted ? theme : "light";
   
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme={actualTheme as ToasterProps["theme"]}
       position="bottom-right"
       className="toaster group"
       toastOptions={{

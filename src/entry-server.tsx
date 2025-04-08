@@ -5,10 +5,9 @@ import App from './App';
 import { renderToString } from 'react-dom/server';
 
 export function render(url: string) {
-  // Try-catch to avoid server crashes on rendering errors
   try {
-    // Don't create any browser mocks to avoid hydration issues
-    
+    // Render the app with minimal server configuration
+    // No browser APIs are mocked to avoid hydration mismatches
     const html = renderToString(
       <StaticRouter location={url}>
         <App />
