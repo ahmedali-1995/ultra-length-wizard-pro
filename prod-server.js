@@ -15,8 +15,13 @@ if (typeof window === 'undefined') {
   global.window = {
     matchMedia: () => ({
       matches: false,
+      media: '',
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
       addEventListener: () => {},
       removeEventListener: () => {},
+      dispatchEvent: () => true,
     }),
     innerWidth: 1024,
     localStorage: {
@@ -34,7 +39,19 @@ if (typeof window === 'undefined') {
     documentElement: {
       classList: {
         add: () => {},
-        remove: () => {}
+        remove: () => {},
+        length: 0,
+        value: '',
+        contains: () => false,
+        item: () => null,
+        toggle: () => false,
+        replace: () => false,
+        supports: () => false,
+        entries: () => [][Symbol.iterator](),
+        forEach: () => {},
+        keys: () => [][Symbol.iterator](),
+        values: () => [][Symbol.iterator](),
+        toString: () => ''
       }
     }
   };
