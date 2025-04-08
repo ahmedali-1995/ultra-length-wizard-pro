@@ -23,8 +23,8 @@ import {
 } from '@/utils/conversionUtils';
 import DimensionSelector from './DimensionSelector';
 import { toast } from 'sonner';
-import { ArrowRight, Maximize2, Minimize2, RefreshCcw, Info, ArrowDown } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowRight, Maximize2, Minimize2, RefreshCcw, Info, ArrowDown, ChevronUp, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { 
   ChartContainer, 
@@ -119,34 +119,32 @@ const ConversionVisualizer: React.FC = () => {
     
     if (dimension === 'length') {
       examples.push(
-        { name: 'Atom', size: 0.0000000001, unit: 'meter', description: 'Typical diameter of an atom' },
-        { name: 'DNA width', size: 0.0000000023, unit: 'meter', description: 'Width of a DNA double helix' },
-        { name: 'Virus', size: 0.0000001, unit: 'meter', description: 'Average size of a virus' },
-        { name: 'Human hair', size: 0.00008, unit: 'meter', description: 'Average diameter of human hair' },
+        { name: 'Observable Universe', size: 8.8e26, unit: 'meter', description: 'Diameter of observable universe' },
+        { name: 'Andromeda Galaxy', size: 2.5e21, unit: 'meter', description: 'Diameter of Andromeda' },
+        { name: 'Light year', size: 9.46e15, unit: 'meter', description: 'Distance light travels in a year' },
+        { name: 'Solar System', size: 9e12, unit: 'meter', description: 'Diameter to Kuiper Belt' },
+        { name: 'Earth to Sun', size: 1.496e11, unit: 'meter', description: 'Average distance (1 AU)' },
         
-        { name: 'Ant', size: 0.005, unit: 'meter', description: 'Average size of a worker ant' },
-        { name: 'Credit card', size: 0.086, unit: 'meter', description: 'Length of a standard card' },
-        { name: 'Smartphone', size: 0.15, unit: 'meter', description: 'Length of typical smartphone' },
+        { name: 'Earth\'s diameter', size: 12742000, unit: 'meter', description: 'Average diameter of Earth' },
+        { name: 'Great Barrier Reef', size: 2300000, unit: 'meter', description: 'Length of reef system' },
+        { name: 'Mount Everest', size: 8849, unit: 'meter', description: 'Height above sea level' },
+        { name: 'Golden Gate Bridge', size: 2737, unit: 'meter', description: 'Total length' },
+        { name: 'Eiffel Tower', size: 324, unit: 'meter', description: 'Height to the tip' },
+        
+        { name: 'Football field', size: 105, unit: 'meter', description: 'Standard field length' },
+        { name: 'Swimming pool', size: 25, unit: 'meter', description: 'Olympic pool length' },
+        { name: 'Car length', size: 4.5, unit: 'meter', description: 'Average passenger car' },
+        { name: 'Door height', size: 2.1, unit: 'meter', description: 'Standard door height' },
         { name: 'Basketball', size: 0.24, unit: 'meter', description: 'Diameter of basketball' },
         
-        { name: 'Door height', size: 2.1, unit: 'meter', description: 'Standard door height' },
-        { name: 'Car length', size: 4.5, unit: 'meter', description: 'Average passenger car' },
+        { name: 'Smartphone', size: 0.15, unit: 'meter', description: 'Length of typical smartphone' },
+        { name: 'Credit card', size: 0.086, unit: 'meter', description: 'Length of a standard card' },
+        { name: 'Ant', size: 0.005, unit: 'meter', description: 'Average size of a worker ant' },
         
-        { name: 'Swimming pool', size: 25, unit: 'meter', description: 'Olympic pool length' },
-        { name: 'Football field', size: 105, unit: 'meter', description: 'Standard field length' },
-        { name: 'Eiffel Tower', size: 324, unit: 'meter', description: 'Height to the tip' },
-        { name: 'Golden Gate Bridge', size: 2737, unit: 'meter', description: 'Total length' },
-        
-        { name: 'Mount Everest', size: 8849, unit: 'meter', description: 'Height above sea level' },
-        { name: 'Great Barrier Reef', size: 2300000, unit: 'meter', description: 'Length of reef system' },
-        { name: 'Earth\'s diameter', size: 12742000, unit: 'meter', description: 'Average diameter of Earth' },
-        
-        { name: 'Earth to Moon', size: 384400000, unit: 'meter', description: 'Average distance' },
-        { name: 'Earth to Sun', size: 149600000000, unit: 'meter', description: 'Average distance (1 AU)' },
-        { name: 'Solar System', size: 9000000000000, unit: 'meter', description: 'Diameter to Kuiper Belt' },
-        { name: 'Light year', size: 9460730472580800, unit: 'meter', description: 'Distance light travels in a year' },
-        { name: 'Andromeda Galaxy', size: 2500000000000000000, unit: 'meter', description: 'Diameter of Andromeda' },
-        { name: 'Observable Universe', size: 8.8e26, unit: 'meter', description: 'Diameter of observable universe' }
+        { name: 'Human hair', size: 0.00008, unit: 'meter', description: 'Average diameter of human hair' },
+        { name: 'Virus', size: 0.0000001, unit: 'meter', description: 'Average size of a virus' },
+        { name: 'DNA width', size: 0.0000000023, unit: 'meter', description: 'Width of a DNA double helix' },
+        { name: 'Atom', size: 0.0000000001, unit: 'meter', description: 'Typical diameter of an atom' }
       );
     } else if (dimension === 'area') {
       examples.push(
@@ -243,6 +241,69 @@ const ConversionVisualizer: React.FC = () => {
   };
 
   const closestExample = findClosestExample();
+  
+  const groupExamplesByScale = () => {
+    if (dimension === 'length') {
+      return [
+        { 
+          name: "Astronomical", 
+          description: "Cosmic distances and objects",
+          examples: realWorldExamples.filter(e => e.size > 1e9)
+        },
+        { 
+          name: "Geographic", 
+          description: "Earth-scale features",
+          examples: realWorldExamples.filter(e => e.size <= 1e9 && e.size > 1000)
+        },
+        { 
+          name: "Human scale", 
+          description: "Everyday objects",
+          examples: realWorldExamples.filter(e => e.size <= 1000 && e.size > 0.01)
+        },
+        { 
+          name: "Microscopic", 
+          description: "Requires magnification to see",
+          examples: realWorldExamples.filter(e => e.size <= 0.01)
+        }
+      ];
+    } else if (dimension === 'area') {
+      return [
+        { name: "Large areas", description: "Geographical regions", examples: realWorldExamples.filter(e => e.size > 1e6) },
+        { name: "Medium areas", description: "Buildings and plots", examples: realWorldExamples.filter(e => e.size <= 1e6 && e.size > 10) },
+        { name: "Small areas", description: "Everyday objects", examples: realWorldExamples.filter(e => e.size <= 10) },
+      ];
+    } else {
+      return [
+        { name: "Massive volumes", description: "Astronomical objects", examples: realWorldExamples.filter(e => e.size > 1e9) },
+        { name: "Large volumes", description: "Lakes and reservoirs", examples: realWorldExamples.filter(e => e.size <= 1e9 && e.size > 100) },
+        { name: "Medium volumes", description: "Rooms and containers", examples: realWorldExamples.filter(e => e.size <= 100 && e.size > 0.01) },
+        { name: "Small volumes", description: "Everyday items", examples: realWorldExamples.filter(e => e.size <= 0.01) },
+      ];
+    }
+  };
+
+  const groupedExamples = groupExamplesByScale();
+
+  const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({
+    "Astronomical": false,
+    "Geographic": false,
+    "Human scale": true,
+    "Microscopic": false,
+    "Large areas": false,
+    "Medium areas": true,
+    "Small areas": false,
+    "Massive volumes": false,
+    "Large volumes": false,
+    "Medium volumes": true,
+    "Small volumes": false
+  });
+
+  const toggleGroup = (groupName: string) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [groupName]: !prev[groupName]
+    }));
+  };
   
   return (
     <div className="space-y-6">
@@ -470,129 +531,131 @@ const ConversionVisualizer: React.FC = () => {
               </Card>
             )}
             
-            <div className="bg-muted/50 rounded-lg p-4 overflow-hidden">
+            <div className="bg-muted/50 rounded-lg p-4">
               <div className="mb-3 text-sm text-center text-muted-foreground">
-                Sizes relative to your selected unit: {getUnitName(fromUnit)}
+                Sizes in {getUnitName(fromUnit)}
               </div>
               
-              <div className="relative h-[300px] w-full">
-                <ChartContainer 
-                  className="h-full"
-                  config={{
-                    example: { color: "hsl(var(--primary))" },
-                    selected: { color: "hsl(var(--destructive))" }
-                  }}
-                >
-                  <React.Fragment>
-                    {realWorldExamples
-                      .filter(ex => ex.sizeInSelectedUnit !== null)
-                      .sort((a, b) => (a.sizeInSelectedUnit as number) - (b.sizeInSelectedUnit as number))
-                      .slice(0, 15)
-                      .map((example, index) => {
-                        const isClosest = closestExample && closestExample.name === example.name;
-                        const isInRange = example.sizeInSelectedUnit !== null && 
-                                        ((example.sizeInSelectedUnit as number) >= parseFloat(value) * 0.1) && 
-                                        ((example.sizeInSelectedUnit as number) <= parseFloat(value) * 10);
-                        
-                        return (
-                          <div 
-                            key={example.name}
-                            className="absolute left-0 transition-all duration-300"
-                            style={{
-                              bottom: `${(index / (realWorldExamples.filter(ex => ex.sizeInSelectedUnit !== null).length - 1)) * 100}%`,
-                              transform: `translateY(50%)`
-                            }}
-                          >
-                            <div className={`flex items-center gap-2 ${isClosest ? 'font-medium text-primary' : ''}`}>
-                              <div 
-                                className={`h-3 w-3 rounded-full ${
-                                  isClosest ? 'bg-primary ring-2 ring-primary/30' : 
-                                  isInRange ? 'bg-primary/70' : 'bg-muted-foreground/40'
-                                }`}
-                              />
-                              <div className="flex gap-1 items-baseline">
-                                <span className="font-medium">{example.name}</span>
-                                <span className="text-xs text-muted-foreground whitespace-nowrap">
-                                  ({example.formattedSize} {getUnitAbbreviation(fromUnit)})
-                                </span>
-                              </div>
-                            </div>
-                            <motion.div 
-                              className={`h-1 bg-primary/30 mt-1 rounded-full ${isClosest ? 'bg-primary' : ''}`}
-                              initial={{ width: 0 }}
-                              animate={{ 
-                                width: Math.min(Math.max(
-                                  Math.log10((example.sizeInSelectedUnit as number) + 1) * 50, 
-                                  20
-                                ), 200) 
-                              }}
-                              transition={{ duration: 0.5, delay: index * 0.05 }}
-                            />
-                          </div>
-                        );
-                      })}
-                      
-                      {value && !isNaN(parseFloat(value)) && (
-                        <div 
-                          className="absolute left-0 w-full border-t border-dashed border-destructive/50 transition-all duration-300"
-                          style={{
-                            bottom: `${calculatePositionPercentage(parseFloat(value), 
-                              realWorldExamples
-                                .filter(ex => ex.sizeInSelectedUnit !== null)
-                                .map(ex => ex.sizeInSelectedUnit as number)
-                            )}%`,
-                          }}
+              <div className="space-y-3">
+                {groupedExamples.map((group) => (
+                  <div key={group.name} className="border border-border rounded-lg overflow-hidden">
+                    <button 
+                      className="w-full flex justify-between items-center p-3 bg-background hover:bg-muted/20 transition-colors"
+                      onClick={() => toggleGroup(group.name)}
+                    >
+                      <div className="flex flex-col items-start">
+                        <span className="font-semibold">{group.name}</span>
+                        <span className="text-xs text-muted-foreground">{group.description}</span>
+                      </div>
+                      {expandedGroups[group.name] ? 
+                        <ChevronUp className="h-4 w-4 text-muted-foreground" /> : 
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      }
+                    </button>
+                    
+                    <AnimatePresence>
+                      {expandedGroups[group.name] && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-hidden"
                         >
-                          <div className="absolute right-0 -top-3 bg-background px-1 text-xs text-destructive">
-                            Your value: {value} {getUnitAbbreviation(fromUnit)}
+                          <div className="p-3 space-y-2">
+                            {group.examples
+                              .sort((a, b) => (b.sizeInSelectedUnit as number) - (a.sizeInSelectedUnit as number))
+                              .slice(0, 5)
+                              .map(example => {
+                                const isClosest = closestExample && closestExample.name === example.name;
+                                return (
+                                  <div 
+                                    key={example.name}
+                                    className={`flex items-center justify-between p-2 rounded-md ${
+                                      isClosest ? 'bg-primary/10 border-l-4 border-primary' : 'bg-background'
+                                    }`}
+                                  >
+                                    <div className="flex-1">
+                                      <div className="font-medium text-sm">{example.name}</div>
+                                      <div className="text-xs text-muted-foreground">{example.description}</div>
+                                    </div>
+                                    <div className="text-right font-mono text-xs whitespace-nowrap">
+                                      {example.formattedSize} {getUnitAbbreviation(fromUnit)}
+                                    </div>
+                                  </div>
+                                );
+                              })}
                           </div>
-                        </div>
+                        </motion.div>
                       )}
-                  </React.Fragment>
-                </ChartContainer>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
-                {realWorldExamples
-                  .filter(ex => ex.sizeInSelectedUnit !== null)
-                  .sort((a, b) => (a.sizeInSelectedUnit as number) - (b.sizeInSelectedUnit as number))
-                  .slice(0, 9)
-                  .map(example => {
-                    const isClosest = closestExample && closestExample.name === example.name;
-                    return (
-                      <Card 
-                        key={example.name}
-                        className={`p-3 text-sm ${isClosest ? 'border-primary shadow-sm' : ''}`}
-                      >
-                        <div className="font-medium">{example.name}</div>
-                        <div className="text-muted-foreground text-xs">{example.description}</div>
-                        <div className="mt-1 font-mono">{example.formattedSize} {getUnitAbbreviation(fromUnit)}</div>
-                      </Card>
-                    );
-                  })
-                }
+                    </AnimatePresence>
+                  </div>
+                ))}
               </div>
 
-              <div className="mt-4">
-                <h4 className="text-sm font-medium mb-3">Scale ranges</h4>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
-                  <div className="p-2 bg-background rounded-md">
-                    <div className="font-medium">Microscopic</div>
-                    <div className="text-muted-foreground">Atoms, molecules, cells</div>
-                  </div>
-                  <div className="p-2 bg-background rounded-md">
-                    <div className="font-medium">Human scale</div>
-                    <div className="text-muted-foreground">Everyday objects, buildings</div>
-                  </div>
-                  <div className="p-2 bg-background rounded-md">
-                    <div className="font-medium">Geographic</div>
-                    <div className="text-muted-foreground">Cities, countries, planets</div>
-                  </div>
-                  <div className="p-2 bg-background rounded-md">
-                    <div className="font-medium">Astronomical</div>
-                    <div className="text-muted-foreground">Solar system, galaxies, universe</div>
-                  </div>
-                </div>
+              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                {dimension === 'length' && (
+                  <>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Microscopic</div>
+                      <div className="text-muted-foreground">Atoms, molecules, cells</div>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Human scale</div>
+                      <div className="text-muted-foreground">Everyday objects, buildings</div>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Geographic</div>
+                      <div className="text-muted-foreground">Cities, countries, planets</div>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Astronomical</div>
+                      <div className="text-muted-foreground">Solar system, galaxies, universe</div>
+                    </div>
+                  </>
+                )}
+                
+                {dimension === 'area' && (
+                  <>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Small areas</div>
+                      <div className="text-muted-foreground">Cards, screens, papers</div>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Medium areas</div>
+                      <div className="text-muted-foreground">Rooms, courts, lots</div>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Large areas</div>
+                      <div className="text-muted-foreground">Parks, cities, states</div>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Massive areas</div>
+                      <div className="text-muted-foreground">Countries, planets, stars</div>
+                    </div>
+                  </>
+                )}
+                
+                {dimension === 'volume' && (
+                  <>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Small volumes</div>
+                      <div className="text-muted-foreground">Drops, cups, containers</div>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Medium volumes</div>
+                      <div className="text-muted-foreground">Appliances, vehicles, rooms</div>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Large volumes</div>
+                      <div className="text-muted-foreground">Lakes, buildings, stadiums</div>
+                    </div>
+                    <div className="p-2 bg-background rounded-md">
+                      <div className="font-medium">Massive volumes</div>
+                      <div className="text-muted-foreground">Oceans, planets, stars</div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
