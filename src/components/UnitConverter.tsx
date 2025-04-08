@@ -12,6 +12,11 @@ import { lengthUnits, groupedLengthUnits, convert, formatValue, generateId } fro
 import { toast } from 'sonner';
 import ConversionHistory from './ConversionHistory';
 import { updateSEO } from '@/utils/seoUtils';
+import ThemeToggle from './ThemeToggle';
+import PrecisionControl from './PrecisionControl';
+import QuickConvert from './QuickConvert';
+import ComparisonTable from './ComparisonTable';
+import FavoriteConversions from './FavoriteConversions';
 
 const UnitConverter: React.FC = () => {
   const [input, setInput] = useState<ConversionInput>({
@@ -23,6 +28,9 @@ const UnitConverter: React.FC = () => {
   const [result, setResult] = useState<string>('');
   const [history, setHistory] = useState<ConversionResult[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string>('metric');
+  const [precision, setPrecision] = useState<number>(4);
+  const [activeTab, setActiveTab] = useState<string>('converter');
+  const [comparisonUnits, setComparisonUnits] = useState<Array<{id: string, name: string}>>([]);
   
   // Update the result when any input changes
   useEffect(() => {
@@ -30,7 +38,7 @@ const UnitConverter: React.FC = () => {
       try {
         const numericValue = parseFloat(input.value);
         const convertedValue = convert(numericValue, input.fromUnit, input.toUnit);
-        setResult(formatValue(convertedValue));
+        setResult(formatValue(convertedValue, precision));
         
         // Update SEO
         const fromUnit = lengthUnits.find(unit => unit.id === input.fromUnit);
@@ -45,7 +53,39 @@ const UnitConverter: React.FC = () => {
     } else {
       setResult('');
     }
-  }, [input]);
+  }, [input, precision]);
+  
+  // Initialize comparison units
+  useEffect(() => {
+    // Get 5 popular units for comparison
+    const popularUnits = [
+      { id: 'meter', name: 'Meters' },
+      { id: 'foot', name: 'Feet' },
+      { id: 'inch', name: 'Inches' },
+      { id: 'centimeter', name: 'Centimeters' },
+      { id: 'kilometer', name: 'Kilometers' },
+      { id: 'mile', name: 'Miles' }
+    ];
+    
+    setComparisonUnits(popularUnits);
+  }, []);
+  
+  // Load history from localStorage on initial render
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('conversionHistory');
+    if (savedHistory) {
+      try {
+        setHistory(JSON.parse(savedHistory));
+      } catch (e) {
+        console.error('Failed to parse saved history:', e);
+      }
+    }
+  }, []);
+  
+  // Save history to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('conversionHistory', JSON.stringify(history));
+  }, [history]);
   
   // Get the name of a unit by its ID
   const getUnitName = (unitId: string): string => {
@@ -72,7 +112,7 @@ const UnitConverter: React.FC = () => {
         
         setHistory(prev => [newHistoryItem, ...prev].slice(0, 20)); // Keep only last 20 conversions
         toast.success("Conversion completed", {
-          description: `${formatValue(numericValue)} ${getUnitName(input.fromUnit)} = ${formatValue(convertedValue)} ${getUnitName(input.toUnit)}`
+          description: `${formatValue(numericValue, precision)} ${getUnitName(input.fromUnit)} = ${formatValue(convertedValue, precision)} ${getUnitName(input.toUnit)}`
         });
       } catch (error) {
         toast.error("Conversion failed", {
@@ -80,7 +120,7 @@ const UnitConverter: React.FC = () => {
         });
       }
     }
-  }, [input]);
+  }, [input, precision]);
   
   // Swap the from and to units
   const handleSwapUnits = useCallback(() => {
@@ -101,13 +141,14 @@ const UnitConverter: React.FC = () => {
   
   // Copy a specific history item to clipboard
   const handleCopyHistoryItem = useCallback((item: ConversionResult) => {
-    navigator.clipboard.writeText(`${formatValue(item.fromValue)} ${item.fromUnit} = ${formatValue(item.toValue)} ${item.toUnit}`);
+    navigator.clipboard.writeText(`${formatValue(item.fromValue, precision)} ${item.fromUnit} = ${formatValue(item.toValue, precision)} ${item.toUnit}`);
     toast.success("Copied to clipboard");
-  }, []);
+  }, [precision]);
   
   // Clear all history
   const handleClearHistory = useCallback(() => {
     setHistory([]);
+    localStorage.removeItem('conversionHistory');
     toast.success("History cleared");
   }, []);
   
@@ -116,17 +157,46 @@ const UnitConverter: React.FC = () => {
     setHistory(prev => prev.filter(item => item.id !== id));
   }, []);
   
+  // Handle quick conversion selection
+  const handleQuickConvert = useCallback((fromUnit: string, toUnit: string) => {
+    setInput(prev => ({
+      ...prev,
+      fromUnit,
+      toUnit
+    }));
+    
+    // Switch to converter tab
+    setActiveTab('converter');
+  }, []);
+  
   return (
     <div className="w-full max-w-4xl mx-auto">
       <Card className="converter-card animate-fade-in">
-        <Tabs defaultValue="converter" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-primary">Length Converter</h2>
+          <ThemeToggle />
+        </div>
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="converter">Converter</TabsTrigger>
+            <TabsTrigger value="advanced">Advanced</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
           </TabsList>
           
           <TabsContent value="converter" className="py-4">
             <div className="grid gap-6">
+              {/* Favorites */}
+              <FavoriteConversions 
+                onSelect={(fromUnit, toUnit) => {
+                  setInput(prev => ({ ...prev, fromUnit, toUnit }));
+                }}
+                currentFromUnit={input.fromUnit}
+                currentToUnit={input.toUnit}
+                precision={precision}
+                value={input.value}
+              />
+              
               {/* Input Value */}
               <div className="space-y-2">
                 <Label htmlFor="value">Enter Value</Label>
@@ -139,6 +209,12 @@ const UnitConverter: React.FC = () => {
                   className="converter-input text-lg"
                 />
               </div>
+              
+              {/* Precision Control */}
+              <PrecisionControl 
+                precision={precision} 
+                onChange={setPrecision} 
+              />
               
               {/* Unit Selection */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 items-center">
@@ -235,6 +311,24 @@ const UnitConverter: React.FC = () => {
               >
                 Convert
               </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="advanced" className="py-4">
+            <div className="space-y-6">
+              {/* Quick Convert Section */}
+              <QuickConvert 
+                onSelect={handleQuickConvert} 
+                precision={precision}
+              />
+              
+              {/* Comparison Table */}
+              <ComparisonTable 
+                value={parseFloat(input.value)} 
+                fromUnit={input.fromUnit} 
+                units={comparisonUnits}
+                precision={precision}
+              />
             </div>
           </TabsContent>
           

@@ -93,15 +93,20 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
+  /* Improve dark mode transitions */
+  body, html, #root, .MuiBox-root {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
 }
 
 @layer components {
   .converter-card {
-    @apply bg-white shadow-lg rounded-2xl p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl;
+    @apply bg-card shadow-lg rounded-2xl p-6 border border-gray-100 dark:border-gray-800 transition-all duration-300 hover:shadow-xl;
   }
   
   .converter-input {
-    @apply w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200;
+    @apply w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200;
   }
   
   .converter-button {
@@ -109,14 +114,49 @@
   }
   
   .converter-select {
-    @apply w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200 bg-white;
+    @apply w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200;
   }
   
   .history-item {
-    @apply flex items-center justify-between p-3 border-b border-gray-100 hover:bg-gray-50 transition-all duration-200 cursor-pointer;
+    @apply flex items-center justify-between p-3 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 cursor-pointer;
   }
   
   .copy-button {
-    @apply p-2 rounded-full hover:bg-gray-100 transition-all duration-200;
+    @apply p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200;
+  }
+
+  /* Additional animation classes */
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+
+  .fade-in-element {
+    @apply opacity-0 animate-[fade-in_0.5s_ease-out_forwards];
+  }
+
+  .slide-in-element {
+    @apply opacity-0 translate-x-4 animate-[slide-in_0.5s_ease-out_forwards];
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-primary bg-clip-text text-transparent;
+  }
+
+  /* Card hover effects */
+  .hover-card {
+    @apply transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px];
+  }
+}
+
+/* Custom animations */
+@keyframes slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
