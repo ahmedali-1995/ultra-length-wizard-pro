@@ -647,4 +647,34 @@ const ConversionVisualizer: React.FC = () => {
                                 return (
                                   <div 
                                     key={example.name}
-                                    className={`flex items-center justify-between p-2 rounded-
+                                    className={`flex items-center justify-between p-2 rounded-md ${isClosest ? 'bg-primary/10 border border-primary/30' : 'hover:bg-muted/50'}`}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      {getExampleIcon(example, group.name)}
+                                      <div>
+                                        <div className="font-medium text-sm">{example.name}</div>
+                                        <div className="text-xs text-muted-foreground">{example.description}</div>
+                                      </div>
+                                    </div>
+                                    <div className="font-mono text-xs whitespace-nowrap">
+                                      {example.formattedSize}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ConversionVisualizer;
