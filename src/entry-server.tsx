@@ -6,18 +6,34 @@ import { renderToString } from 'react-dom/server'
 
 // This helps with SSR by providing a simulated environment for components
 // that might rely on browser-only APIs
-global.window = global.window || {}
-global.document = global.document || {
-  documentElement: {
-    classList: {
-      add: () => {},
-      remove: () => {}
+if (typeof window === 'undefined') {
+  // @ts-ignore - We're deliberately creating partial mock objects for SSR
+  global.window = {
+    matchMedia: () => ({
+      matches: false,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }),
+    innerWidth: 1024,
+    localStorage: {
+      getItem: () => null,
+      setItem: () => null,
+      length: 0,
+      clear: () => {},
+      key: () => null,
+      removeItem: () => {}
     }
-  }
-}
-global.localStorage = global.localStorage || {
-  getItem: () => null,
-  setItem: () => null
+  };
+
+  // @ts-ignore - We're deliberately creating partial mock objects for SSR
+  global.document = {
+    documentElement: {
+      classList: {
+        add: () => {},
+        remove: () => {}
+      }
+    }
+  };
 }
 
 export function render(url: string, context = {}) {

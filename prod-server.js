@@ -10,18 +10,34 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isProduction = process.env.NODE_ENV === 'production'
 
 // Set up global browser API mocks for server-side rendering
-global.window = global.window || {}
-global.document = global.document || {
-  documentElement: {
-    classList: {
-      add: () => {},
-      remove: () => {}
+if (typeof window === 'undefined') {
+  // @ts-ignore - We're deliberately creating partial mock objects for SSR
+  global.window = {
+    matchMedia: () => ({
+      matches: false,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }),
+    innerWidth: 1024,
+    localStorage: {
+      getItem: () => null,
+      setItem: () => null,
+      length: 0,
+      clear: () => {},
+      key: () => null,
+      removeItem: () => {}
     }
-  }
-}
-global.localStorage = global.localStorage || {
-  getItem: () => null,
-  setItem: () => null
+  };
+
+  // @ts-ignore - We're deliberately creating partial mock objects for SSR
+  global.document = {
+    documentElement: {
+      classList: {
+        add: () => {},
+        remove: () => {}
+      }
+    }
+  };
 }
 
 // The manifest is generated after build

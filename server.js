@@ -7,6 +7,37 @@ import { createServer as createViteServer } from 'vite'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+// Set up global browser API mocks for server-side rendering
+if (typeof window === 'undefined') {
+  // @ts-ignore - We're deliberately creating partial mock objects for SSR
+  global.window = {
+    matchMedia: () => ({
+      matches: false,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }),
+    innerWidth: 1024,
+    localStorage: {
+      getItem: () => null,
+      setItem: () => null,
+      length: 0,
+      clear: () => {},
+      key: () => null,
+      removeItem: () => {}
+    }
+  };
+
+  // @ts-ignore - We're deliberately creating partial mock objects for SSR
+  global.document = {
+    documentElement: {
+      classList: {
+        add: () => {},
+        remove: () => {}
+      }
+    }
+  };
+}
+
 async function createServer() {
   const app = express()
 
