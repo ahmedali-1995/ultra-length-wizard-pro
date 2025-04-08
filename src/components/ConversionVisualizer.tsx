@@ -119,42 +119,91 @@ const ConversionVisualizer: React.FC = () => {
     
     if (dimension === 'length') {
       examples.push(
+        { name: 'Atom', size: 0.0000000001, unit: 'meter', description: 'Typical diameter of an atom' },
+        { name: 'DNA width', size: 0.0000000023, unit: 'meter', description: 'Width of a DNA double helix' },
+        { name: 'Virus', size: 0.0000001, unit: 'meter', description: 'Average size of a virus' },
+        { name: 'Human hair', size: 0.00008, unit: 'meter', description: 'Average diameter of human hair' },
+        
         { name: 'Ant', size: 0.005, unit: 'meter', description: 'Average size of a worker ant' },
         { name: 'Credit card', size: 0.086, unit: 'meter', description: 'Length of a standard card' },
         { name: 'Smartphone', size: 0.15, unit: 'meter', description: 'Length of typical smartphone' },
         { name: 'Basketball', size: 0.24, unit: 'meter', description: 'Diameter of basketball' },
+        
         { name: 'Door height', size: 2.1, unit: 'meter', description: 'Standard door height' },
         { name: 'Car length', size: 4.5, unit: 'meter', description: 'Average passenger car' },
+        
         { name: 'Swimming pool', size: 25, unit: 'meter', description: 'Olympic pool length' },
         { name: 'Football field', size: 105, unit: 'meter', description: 'Standard field length' },
         { name: 'Eiffel Tower', size: 324, unit: 'meter', description: 'Height to the tip' },
-        { name: 'Golden Gate Bridge', size: 2737, unit: 'meter', description: 'Total length' }
+        { name: 'Golden Gate Bridge', size: 2737, unit: 'meter', description: 'Total length' },
+        
+        { name: 'Mount Everest', size: 8849, unit: 'meter', description: 'Height above sea level' },
+        { name: 'Great Barrier Reef', size: 2300000, unit: 'meter', description: 'Length of reef system' },
+        { name: 'Earth\'s diameter', size: 12742000, unit: 'meter', description: 'Average diameter of Earth' },
+        
+        { name: 'Earth to Moon', size: 384400000, unit: 'meter', description: 'Average distance' },
+        { name: 'Earth to Sun', size: 149600000000, unit: 'meter', description: 'Average distance (1 AU)' },
+        { name: 'Solar System', size: 9000000000000, unit: 'meter', description: 'Diameter to Kuiper Belt' },
+        { name: 'Light year', size: 9460730472580800, unit: 'meter', description: 'Distance light travels in a year' },
+        { name: 'Andromeda Galaxy', size: 2500000000000000000, unit: 'meter', description: 'Diameter of Andromeda' },
+        { name: 'Observable Universe', size: 8.8e26, unit: 'meter', description: 'Diameter of observable universe' }
       );
     } else if (dimension === 'area') {
       examples.push(
+        { name: 'Red blood cell', size: 0.0000000001, unit: 'square-meter', description: 'Surface area of a red blood cell' },
+        { name: 'Bacteria', size: 0.000000001, unit: 'square-meter', description: 'Surface area of a typical bacterium' },
+        
         { name: 'Postage stamp', size: 0.0004, unit: 'square-meter', description: 'Area of typical stamp' },
         { name: 'Smartphone screen', size: 0.01, unit: 'square-meter', description: 'Screen area of typical smartphone' },
         { name: 'Piece of paper', size: 0.06, unit: 'square-meter', description: 'Standard A4 sheet' },
         { name: 'Door', size: 1.6, unit: 'square-meter', description: 'Standard door area' },
+        
         { name: 'Parking space', size: 12, unit: 'square-meter', description: 'Standard car parking spot' },
+        { name: 'Studio apartment', size: 35, unit: 'square-meter', description: 'Small apartment' },
         { name: 'Tennis court', size: 260, unit: 'square-meter', description: 'Singles court area' },
         { name: 'Basketball court', size: 420, unit: 'square-meter', description: 'NBA regulation court' },
+        
         { name: 'Football field', size: 7140, unit: 'square-meter', description: 'Standard field area' },
         { name: 'City block', size: 18000, unit: 'square-meter', description: 'Typical urban block' },
-        { name: 'Central Park', size: 3410000, unit: 'square-meter', description: 'NYC Central Park area' }
+        { name: 'Central Park', size: 3410000, unit: 'square-meter', description: 'NYC Central Park area' },
+        { name: 'Manhattan', size: 59100000, unit: 'square-meter', description: 'Total area of Manhattan' },
+        
+        { name: 'Lake Tahoe', size: 495000000, unit: 'square-meter', description: 'Surface area of Lake Tahoe' },
+        { name: 'New York City', size: 784000000, unit: 'square-meter', description: 'Total area of NYC' },
+        { name: 'Texas', size: 696200000000, unit: 'square-meter', description: 'Total area of Texas' },
+        { name: 'United States', size: 9834000000000, unit: 'square-meter', description: 'Total area of the US' },
+        
+        { name: 'Earth\'s surface', size: 5.1e14, unit: 'square-meter', description: 'Total surface area of Earth' },
+        { name: 'Jupiter\'s surface', size: 6.1e16, unit: 'square-meter', description: 'Surface area of Jupiter' },
+        { name: 'Sun\'s surface', size: 6.08e18, unit: 'square-meter', description: 'Surface area of the Sun' }
       );
     } else if (dimension === 'volume') {
       examples.push(
+        { name: 'Water molecule', size: 3e-29, unit: 'cubic-meter', description: 'Volume of a single water molecule' },
+        { name: 'Red blood cell', size: 9e-17, unit: 'cubic-meter', description: 'Volume of a red blood cell' },
+        
         { name: 'Teaspoon', size: 0.000005, unit: 'cubic-meter', description: '5 milliliters' },
         { name: 'Shot glass', size: 0.00004, unit: 'cubic-meter', description: '40 milliliters' },
         { name: 'Cup', size: 0.00025, unit: 'cubic-meter', description: '250 milliliters' },
         { name: 'Bottle of water', size: 0.001, unit: 'cubic-meter', description: '1 liter bottle' },
+        
         { name: 'Microwave', size: 0.02, unit: 'cubic-meter', description: 'Interior volume' },
         { name: 'Refrigerator', size: 0.6, unit: 'cubic-meter', description: 'Average refrigerator' },
         { name: 'Hot tub', size: 1.8, unit: 'cubic-meter', description: '6-person hot tub' },
         { name: 'Cargo van', size: 11, unit: 'cubic-meter', description: 'Large cargo van' },
+        
         { name: 'Shipping container', size: 33, unit: 'cubic-meter', description: 'Standard 20ft container' },
-        { name: 'Swimming pool', size: 1250, unit: 'cubic-meter', description: 'Olympic-sized pool' }
+        { name: 'Swimming pool', size: 1250, unit: 'cubic-meter', description: 'Olympic-sized pool' },
+        { name: 'Goodyear Blimp', size: 8425, unit: 'cubic-meter', description: 'Volume of the blimp envelope' },
+        { name: 'House', size: 1000, unit: 'cubic-meter', description: 'Average single-family home' },
+        
+        { name: 'Great Lakes', size: 22671000000000, unit: 'cubic-meter', description: 'Combined volume of all Great Lakes' },
+        { name: 'Earth\'s oceans', size: 1.3e18, unit: 'cubic-meter', description: 'Total volume of Earth\'s oceans' },
+        
+        { name: 'Earth', size: 1.08e21, unit: 'cubic-meter', description: 'Total volume of Earth' },
+        { name: 'Jupiter', size: 1.43e24, unit: 'cubic-meter', description: 'Volume of planet Jupiter' },
+        { name: 'Sun', size: 1.41e27, unit: 'cubic-meter', description: 'Volume of our Sun' },
+        { name: 'VY Canis Majoris', size: 5e30, unit: 'cubic-meter', description: 'Volume of one of the largest known stars' }
       );
     }
     
@@ -434,11 +483,11 @@ const ConversionVisualizer: React.FC = () => {
                     selected: { color: "hsl(var(--destructive))" }
                   }}
                 >
-                  <>
+                  <React.Fragment>
                     {realWorldExamples
                       .filter(ex => ex.sizeInSelectedUnit !== null)
                       .sort((a, b) => (a.sizeInSelectedUnit as number) - (b.sizeInSelectedUnit as number))
-                      .slice(0, 10)
+                      .slice(0, 15)
                       .map((example, index) => {
                         const isClosest = closestExample && closestExample.name === example.name;
                         const isInRange = example.sizeInSelectedUnit !== null && 
@@ -499,7 +548,7 @@ const ConversionVisualizer: React.FC = () => {
                           </div>
                         </div>
                       )}
-                  </>
+                  </React.Fragment>
                 </ChartContainer>
               </div>
               
@@ -507,7 +556,7 @@ const ConversionVisualizer: React.FC = () => {
                 {realWorldExamples
                   .filter(ex => ex.sizeInSelectedUnit !== null)
                   .sort((a, b) => (a.sizeInSelectedUnit as number) - (b.sizeInSelectedUnit as number))
-                  .slice(0, 6)
+                  .slice(0, 9)
                   .map(example => {
                     const isClosest = closestExample && closestExample.name === example.name;
                     return (
@@ -522,6 +571,28 @@ const ConversionVisualizer: React.FC = () => {
                     );
                   })
                 }
+              </div>
+
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-3">Scale ranges</h4>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+                  <div className="p-2 bg-background rounded-md">
+                    <div className="font-medium">Microscopic</div>
+                    <div className="text-muted-foreground">Atoms, molecules, cells</div>
+                  </div>
+                  <div className="p-2 bg-background rounded-md">
+                    <div className="font-medium">Human scale</div>
+                    <div className="text-muted-foreground">Everyday objects, buildings</div>
+                  </div>
+                  <div className="p-2 bg-background rounded-md">
+                    <div className="font-medium">Geographic</div>
+                    <div className="text-muted-foreground">Cities, countries, planets</div>
+                  </div>
+                  <div className="p-2 bg-background rounded-md">
+                    <div className="font-medium">Astronomical</div>
+                    <div className="text-muted-foreground">Solar system, galaxies, universe</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
