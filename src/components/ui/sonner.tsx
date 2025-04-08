@@ -1,12 +1,19 @@
 
 import { useTheme } from "@/hooks/use-theme";
 import { Toaster as Sonner } from "sonner";
+import { useState, useEffect } from "react";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  // Don't try to render Sonner during SSR at all
-  if (typeof window === 'undefined') {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // Don't try to render during SSR
+  if (!mounted) {
     return null;
   }
   

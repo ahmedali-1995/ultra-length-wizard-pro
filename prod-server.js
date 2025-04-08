@@ -34,21 +34,28 @@ async function createServer() {
         'utf-8'
       );
 
-      // 2. Load the SSR entry module
-      const { render } = await import('./dist/server/entry-server.js');
+      try {
+        // 2. Load the SSR entry module
+        const { render } = await import('./dist/server/entry-server.js');
 
-      // 3. Render the app HTML
-      const appHtml = await render(url);
+        // 3. Render the app HTML
+        const appHtml = await render(url);
 
-      // 4. Inject the app-rendered HTML into the template
-      const html = template.replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`);
+        // 4. Inject the app-rendered HTML into the template
+        const html = template.replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`);
 
-      // 5. Send the rendered HTML back
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+        // 5. Send the rendered HTML back
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+      } catch (ssrError) {
+        console.error("SSR rendering failed:", ssrError);
+        
+        // If SSR fails, serve the client-side version
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+      }
     } catch (err) {
-      console.error("Production SSR error:", err);
+      console.error("Production server error:", err);
 
-      // Force client-side rendering on error - don't serve server-rendered HTML that might cause hydration issues
+      // Fallback to client-side rendering by serving the index.html
       const fallbackHtml = fs.readFileSync(
         path.resolve(__dirname, 'dist/client/index.html'),
         'utf-8'

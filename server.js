@@ -35,22 +35,28 @@ async function createServer() {
       // 3. Load the server entry
       const { render } = await vite.ssrLoadModule('/src/entry-server.tsx');
 
-      // 4. Render the app HTML
-      const appHtml = await render(url);
+      try {
+        // 4. Render the app HTML
+        const appHtml = await render(url);
 
-      // 5. Inject the app-rendered HTML into the template
-      const html = template.replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`);
+        // 5. Inject the app-rendered HTML into the template
+        const html = template.replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`);
 
-      // 6. Send the rendered HTML back
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+        // 6. Send the rendered HTML back
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+      } catch (ssrError) {
+        // If SSR fails, send client-only version
+        console.error("SSR render error:", ssrError);
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+      }
     } catch (e) {
       // If an error is caught, let Vite fix the stack trace
       vite.ssrFixStacktrace(e);
       console.error("SSR Error:", e);
       
-      // Force client-side rendering on error - don't pass server-rendered content that might cause hydration errors
-      const clientHTML = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(clientHTML);
+      // Send plain index.html for client-side rendering as fallback
+      const fallbackHTML = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
+      res.status(200).set({ 'Content-Type': 'text/html' }).end(fallbackHTML);
     }
   });
 

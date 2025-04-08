@@ -1,20 +1,20 @@
 
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Toaster } from "sonner";
 
+// This component only renders on the client side
 export const ClientOnlySonner = () => {
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Don't render anything during SSR or before hydration completes
+  // Don't render anything during SSR
   if (!mounted) return null;
   
-  // Use the base Sonner directly to avoid any theme-related hydration issues
   return <Toaster className="toaster group" />;
 };
 

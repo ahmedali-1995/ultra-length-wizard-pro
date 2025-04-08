@@ -4,6 +4,7 @@ import * as React from "react";
 type Theme = 'light' | 'dark';
 
 export function useTheme() {
+  // Initialize with default values
   const [theme, setTheme] = React.useState<Theme>('light');
   const [mounted, setMounted] = React.useState(false);
   
@@ -14,11 +15,14 @@ export function useTheme() {
     // Check for stored preference or system preference
     const setInitialTheme = () => {
       try {
-        const storedTheme = localStorage.getItem('theme') as Theme;
-        if (storedTheme) {
-          setTheme(storedTheme);
-        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          setTheme('dark');
+        // Safe localStorage access for SSR
+        if (typeof window !== 'undefined') {
+          const storedTheme = localStorage.getItem('theme') as Theme;
+          if (storedTheme) {
+            setTheme(storedTheme);
+          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            setTheme('dark');
+          }
         }
       } catch (error) {
         // Silently fail for SSR
@@ -34,14 +38,14 @@ export function useTheme() {
     if (!mounted) return;
     
     try {
-      const root = document.documentElement;
-      if (theme === 'dark') {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
-      
-      if (typeof localStorage !== 'undefined') {
+      if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+        const root = document.documentElement;
+        if (theme === 'dark') {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+        
         localStorage.setItem('theme', theme);
       }
     } catch (error) {
@@ -55,7 +59,7 @@ export function useTheme() {
   }, []);
 
   return { 
-    theme, 
+    theme: mounted ? theme : 'light', // Default to light during SSR
     toggleTheme,
     mounted
   };

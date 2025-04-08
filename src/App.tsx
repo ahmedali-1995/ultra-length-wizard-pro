@@ -1,5 +1,5 @@
 
-import { lazy, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
@@ -9,27 +9,24 @@ import LengthConverter from "./pages/LengthConverter";
 import AreaConverter from "./pages/AreaConverter";
 import VolumeConverter from "./pages/VolumeConverter";
 import CommonConversions from "./pages/CommonConversions";
-
-// Import client-only components
-const ClientOnlySonner = lazy(() => 
-  import("./components/ClientOnlySonner")
-);
+import ClientOnlySonner from "./components/ClientOnlySonner";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Only render client-specific components on the client side
-  const isBrowser = typeof window !== 'undefined';
+  // Use state to track client-side rendering
+  const [isClient, setIsClient] = useState(false);
+  
+  // Effect only runs on the client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        {/* Only render Sonner on client */}
-        {isBrowser && (
-          <Suspense fallback={null}>
-            <ClientOnlySonner />
-          </Suspense>
-        )}
+        {/* Only render client components when on the client */}
+        {isClient && <ClientOnlySonner />}
         
         <Routes>
           <Route path="/" element={<Index />} />

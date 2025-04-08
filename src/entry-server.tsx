@@ -7,12 +7,21 @@ import { renderToString } from 'react-dom/server';
 export function render(url: string) {
   // Try-catch to avoid server crashes on rendering errors
   try {
-    // Don't create mock DOM objects - we'll handle client/server differences with conditionals
+    // Create a simple mock for browser-only APIs
+    if (typeof window === 'undefined') {
+      // Only apply minimal mocks needed for SSR
+      global.localStorage = {
+        getItem: () => null,
+        setItem: () => null,
+      } as any;
+    }
+    
     const html = renderToString(
       <StaticRouter location={url}>
         <App />
       </StaticRouter>
     );
+    
     return html;
   } catch (error) {
     console.error("Server rendering error:", error);
