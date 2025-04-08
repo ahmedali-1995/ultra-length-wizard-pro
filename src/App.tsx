@@ -10,7 +10,7 @@ import AreaConverter from "./pages/AreaConverter";
 import VolumeConverter from "./pages/VolumeConverter";
 import CommonConversions from "./pages/CommonConversions";
 
-// Import regular Toaster for server-side rendering
+// Import regular Toaster for server-side rendering safety
 import { Toaster } from "@/components/ui/toaster";
 
 // Use lazy loading for client-only components
@@ -22,16 +22,22 @@ const ClientOnlySonner = lazy(() =>
 
 const queryClient = new QueryClient();
 
+// Helper to detect if we're in a browser environment
+const isBrowser = typeof window !== 'undefined';
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
+      {/* Only render Toaster on the client side for now */}
+      {isBrowser && <Toaster />}
+      
       {/* Only render Sonner on the client */}
-      {typeof window !== 'undefined' && (
+      {isBrowser && (
         <Suspense fallback={null}>
           <ClientOnlySonner />
         </Suspense>
       )}
+      
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/length-converter" element={<LengthConverter />} />

@@ -5,7 +5,13 @@ import { Toaster as Sonner } from "sonner";
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "light" } = useTheme();
+  // Get theme but safely handle SSR case
+  const { theme = "light", mounted = false } = useTheme();
+  
+  // If not mounted yet (SSR), return null to avoid hydration mismatch
+  if (typeof window === 'undefined' || !mounted) {
+    return null;
+  }
   
   return (
     <Sonner

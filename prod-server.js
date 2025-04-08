@@ -54,7 +54,7 @@ async function createServer() {
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
     } catch (err) {
       console.error("Production SSR error:", err);
-      // Fallback to client-side rendering
+      // Force client-side rendering on error
       const fallbackHtml = fs.readFileSync(
         path.resolve(__dirname, 'dist/client/index.html'),
         'utf-8'

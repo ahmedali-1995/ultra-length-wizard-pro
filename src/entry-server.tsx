@@ -4,15 +4,17 @@ import { StaticRouter } from 'react-router-dom/server';
 import App from './App';
 import { renderToString } from 'react-dom/server';
 
-// This helps with SSR by providing a simulated environment for components
-// that might rely on browser-only APIs
+// Create minimal mock objects for SSR
+// Using 'any' type to avoid TypeScript errors with DOM API mocks
 if (typeof window === 'undefined') {
-  // Simplify mocks to only the absolute minimum required
+  // Create minimal mocks that won't interfere with hydration
   global.window = {} as any;
   global.document = {
     createElement: () => ({}),
     querySelector: () => null
   } as any;
+  
+  // Don't try to mock anything else to avoid hydration mismatches
 }
 
 export function render(url: string) {

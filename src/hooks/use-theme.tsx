@@ -13,20 +13,23 @@ export function useTheme() {
     
     // Check for stored preference or system preference
     try {
-      const storedTheme = localStorage.getItem('theme') as Theme;
-      if (storedTheme) {
-        setTheme(storedTheme);
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        setTheme('dark');
+      if (typeof window !== 'undefined') {
+        const storedTheme = localStorage.getItem('theme') as Theme;
+        if (storedTheme) {
+          setTheme(storedTheme);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          setTheme('dark');
+        }
       }
     } catch (error) {
       // Silently fail for SSR
+      console.error("Theme detection error:", error);
     }
   }, []);
   
   // Apply theme effect - only run when mounted and theme changes
   React.useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || typeof document === 'undefined') return;
     
     try {
       const root = document.documentElement;
@@ -36,9 +39,12 @@ export function useTheme() {
         root.classList.remove('dark');
       }
       
-      localStorage.setItem('theme', theme);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('theme', theme);
+      }
     } catch (error) {
       // Silently fail for SSR
+      console.error("Theme application error:", error);
     }
   }, [theme, mounted]);
 
