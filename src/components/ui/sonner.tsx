@@ -1,14 +1,21 @@
 
 import { useTheme } from "@/hooks/use-theme"
 import { Toaster as Sonner } from "sonner"
+import { useEffect, useState } from "react"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "light", mounted } = useTheme()
+  const { theme = "light" } = useTheme()
+  const [mounted, setMounted] = useState(false)
   
-  // Don't render the Sonner component during SSR to avoid hydration mismatch
-  if (typeof window === 'undefined') {
+  // Only mount the component after client-side hydration
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+  
+  // Don't render during SSR or before hydration is complete
+  if (!mounted) {
     return null
   }
   

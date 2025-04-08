@@ -7,9 +7,6 @@ import { createServer as createViteServer } from 'vite'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// We'll just import the server-side entry point which contains the mocks
-// This ensures consistency between development and production SSR
-
 async function createServer() {
   const app = express()
 

@@ -9,9 +9,6 @@ import serveStatic from 'serve-static'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isProduction = process.env.NODE_ENV === 'production'
 
-// We'll rely on the mocks defined in entry-server.tsx which will be bundled
-// with the production build
-
 // The manifest is generated after build
 const manifest = isProduction
   ? JSON.parse(

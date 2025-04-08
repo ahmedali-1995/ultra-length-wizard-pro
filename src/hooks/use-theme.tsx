@@ -30,13 +30,15 @@ export function useTheme() {
     if (!mounted) return;
     
     try {
-      if (document && document.documentElement) {
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-        
+      const root = document.documentElement;
+      if (theme === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+      
+      // Don't use localStorage during SSR
+      if (typeof window !== 'undefined') {
         localStorage.setItem('theme', theme);
       }
     } catch (error) {
