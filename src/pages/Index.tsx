@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import UnitConverter from '@/components/UnitConverter';
 import Footer from '@/components/Footer';
-import { updateSEO } from '@/utils/seoUtils';
+import { updateSEO, addBreadcrumbSchema } from '@/utils/seoUtils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import ConversionVisualizer from '@/components/ConversionVisualizer';
@@ -11,6 +11,10 @@ import ConversionVisualizer from '@/components/ConversionVisualizer';
 const Index = () => {
   useEffect(() => {
     updateSEO();
+    // Add breadcrumb schema for homepage
+    addBreadcrumbSchema([
+      { name: "Home", url: "https://ultralength.lovable.app/" }
+    ]);
   }, []);
 
   return (
@@ -18,14 +22,20 @@ const Index = () => {
       <Helmet>
         <title>UltraLength Wizard Pro - Advanced Unit Converter Tool</title>
         <meta name="description" content="Convert between any units with this advanced, user-friendly conversion tool. Support for metric, imperial, astronomical and ancient units." />
-        <meta name="keywords" content="unit converter, length converter, area converter, volume converter, metric conversion, imperial units, distance calculator, measurement tool, precise unit conversion, scientific measurement" />
+        <meta name="keywords" content="unit converter, length converter, area converter, volume converter, metric conversion, imperial units, distance calculator, measurement tool, precise unit conversion, scientific measurement, ancient units, astronomical units" />
         <meta property="og:title" content="UltraLength Wizard Pro - Advanced Unit Converter Tool" />
         <meta property="og:description" content="Convert between any units with this advanced, user-friendly conversion tool." />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://ultralength.lovable.app/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="UltraLength Wizard Pro - Advanced Unit Converter Tool" />
         <meta name="twitter:description" content="Convert between any units with this advanced, user-friendly conversion tool." />
+        <meta name="twitter:image" content="https://ultralength.lovable.app/twitter-card.jpg" />
         <link rel="canonical" href="https://ultralength.lovable.app" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#0f172a" />
+        <meta name="author" content="UltraLength Development Team" />
+        <meta name="robots" content="index, follow" />
       </Helmet>
 
       <div className="min-h-screen flex flex-col">
@@ -106,6 +116,101 @@ const Index = () => {
                   tool for students, professionals, engineers, scientists, and anyone who needs to convert
                   between different measurement systems.
                 </p>
+              </div>
+            </section>
+            
+            {/* SEO-Optimized FAQ Section */}
+            <section className="mt-10 max-w-3xl mx-auto">
+              <h2 className="text-2xl font-bold tracking-tight mb-4">Frequently Asked Questions</h2>
+              <div className="space-y-4">
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-semibold mb-2">How accurate is UltraLength Wizard's conversion?</h3>
+                  <p className="text-muted-foreground">
+                    UltraLength Wizard provides precise unit conversions with customizable decimal precision up to 10 decimal places. 
+                    Our calculations are based on standardized conversion factors to ensure accuracy for both everyday use and 
+                    scientific applications.
+                  </p>
+                </div>
+                
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-semibold mb-2">What types of units can I convert with UltraLength Wizard?</h3>
+                  <p className="text-muted-foreground">
+                    UltraLength Wizard supports length, area, and volume conversions across metric (meters, kilometers), 
+                    imperial (feet, inches, yards), astronomical (light-years, parsecs), and historical unit systems 
+                    (cubits, leagues). Whether you need everyday conversions or specialized scientific units, our tool has you covered.
+                  </p>
+                </div>
+                
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-semibold mb-2">Can I visualize the difference between units?</h3>
+                  <p className="text-muted-foreground">
+                    Yes! Our Visualizer tab provides interactive visual comparisons between different units with real-world examples. 
+                    This feature is particularly helpful for understanding the relative scale of different units, especially when 
+                    dealing with very large or very small measurements.
+                  </p>
+                </div>
+                
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-semibold mb-2">How do I convert multiple units at once?</h3>
+                  <p className="text-muted-foreground">
+                    Use the Multi-Convert tab to convert a value to multiple units simultaneously. This feature is perfect for 
+                    comparing results across different measurement systems or for generating comprehensive conversion tables for 
+                    reports and documentation.
+                  </p>
+                </div>
+              </div>
+            </section>
+            
+            {/* Common Conversion Table - Good for SEO */}
+            <section className="mt-10 max-w-3xl mx-auto">
+              <h2 className="text-2xl font-bold tracking-tight mb-4">Common Length Conversions</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-muted">
+                      <th className="border p-2 text-left">From</th>
+                      <th className="border p-2 text-left">To</th>
+                      <th className="border p-2 text-left">Multiply By</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border p-2">Inches</td>
+                      <td className="border p-2">Centimeters</td>
+                      <td className="border p-2">2.54</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2">Feet</td>
+                      <td className="border p-2">Meters</td>
+                      <td className="border p-2">0.3048</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2">Yards</td>
+                      <td className="border p-2">Meters</td>
+                      <td className="border p-2">0.9144</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2">Miles</td>
+                      <td className="border p-2">Kilometers</td>
+                      <td className="border p-2">1.60934</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2">Millimeters</td>
+                      <td className="border p-2">Inches</td>
+                      <td className="border p-2">0.0393701</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2">Meters</td>
+                      <td className="border p-2">Feet</td>
+                      <td className="border p-2">3.28084</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2">Kilometers</td>
+                      <td className="border p-2">Miles</td>
+                      <td className="border p-2">0.621371</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </section>
           </div>

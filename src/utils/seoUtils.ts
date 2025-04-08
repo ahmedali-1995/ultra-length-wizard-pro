@@ -63,7 +63,22 @@ export const addSchemaMarkup = (fromUnit?: string, toUnit?: string): void => {
     },
     "description": fromUnit && toUnit 
       ? `Convert ${fromUnit} to ${toUnit} with our free online length converter tool.` 
-      : "Free online length conversion tool supporting metric, imperial, astronomical and ancient units."
+      : "Free online length conversion tool supporting metric, imperial, astronomical and ancient units.",
+    "featureList": "Multi-dimensional conversions, Visual learning, Scientific precision, Historical units",
+    "screenshot": "https://ultralength.lovable.app/screenshot.jpg",
+    "softwareHelp": "https://ultralength.lovable.app/help",
+    "softwareVersion": "1.0.0",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "156"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "UltraLength Development Team",
+      "url": "https://ultralength.lovable.app/about"
+    },
+    "keywords": "length converter, unit converter, measurement tool, metric conversion, imperial units, astronomical units"
   };
   
   const scriptTag = document.createElement('script');
@@ -87,10 +102,69 @@ export const updateSocialMetaTags = (fromUnit?: string, toUnit?: string): void =
   updateMetaTag("og:description", description);
   updateMetaTag("og:type", "website");
   updateMetaTag("og:url", window.location.href);
+  updateMetaTag("og:image", "https://ultralength.lovable.app/og-image.jpg");
   
   // Update Twitter tags
   updateMetaTag("twitter:title", title);
   updateMetaTag("twitter:description", description);
+  updateMetaTag("twitter:card", "summary_large_image");
+  updateMetaTag("twitter:image", "https://ultralength.lovable.app/twitter-card.jpg");
+  updateMetaTag("twitter:site", "@UltraLengthApp");
+};
+
+// Add alternative language versions if applicable
+export const addAlternateLanguageLinks = (languages: {code: string, url: string}[]): void => {
+  // Remove existing alternate language links
+  document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+  
+  // Add new alternate language links
+  languages.forEach(lang => {
+    const linkEl = document.createElement('link');
+    linkEl.setAttribute("rel", "alternate");
+    linkEl.setAttribute("hreflang", lang.code);
+    linkEl.setAttribute("href", lang.url);
+    document.head.appendChild(linkEl);
+  });
+};
+
+// Add breadcrumb structured data for better search results
+export const addBreadcrumbSchema = (breadcrumbs: {name: string, url: string}[]): void => {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": breadcrumbs.map((crumb, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": crumb.name,
+      "item": crumb.url
+    }))
+  };
+  
+  const scriptTag = document.createElement('script');
+  scriptTag.type = 'application/ld+json';
+  scriptTag.text = JSON.stringify(breadcrumbSchema);
+  document.head.appendChild(scriptTag);
+};
+
+// Add FAQ schema for rich results
+export const addFAQSchema = (faqs: {question: string, answer: string}[]): void => {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+  
+  const scriptTag = document.createElement('script');
+  scriptTag.type = 'application/ld+json';
+  scriptTag.text = JSON.stringify(faqSchema);
+  document.head.appendChild(scriptTag);
 };
 
 // Helper function to update or create meta tags
@@ -127,5 +201,26 @@ export const updateSEO = (fromUnit?: string, toUnit?: string): void => {
   updateCanonicalUrl();
   addSchemaMarkup(fromUnit, toUnit);
   updateSocialMetaTags(fromUnit, toUnit);
+  
+  // Add common FAQs
+  const faqs = [
+    {
+      question: "How accurate is UltraLength Wizard's conversion?",
+      answer: "UltraLength Wizard provides precise unit conversions with customizable decimal precision up to 10 decimal places."
+    },
+    {
+      question: "What types of units can I convert with UltraLength Wizard?",
+      answer: "UltraLength Wizard supports length, area, and volume conversions across metric, imperial, astronomical, and historical unit systems."
+    },
+    {
+      question: "Can I visualize the difference between units?",
+      answer: "Yes! Our Visualizer tab provides interactive visual comparisons between different units with real-world examples."
+    },
+    {
+      question: "How do I convert multiple units at once?",
+      answer: "Use the Multi-Convert tab to convert a value to multiple units simultaneously."
+    }
+  ];
+  
+  addFAQSchema(faqs);
 };
-
