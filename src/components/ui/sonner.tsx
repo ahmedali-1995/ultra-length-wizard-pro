@@ -1,16 +1,18 @@
 
-import { useTheme as useNextTheme } from "next-themes"
+import { useTheme } from "@/hooks/use-theme"
 import { Toaster as Sonner } from "sonner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  // For SSR, we need to use a default theme to avoid hydration mismatch
-  const { theme = "system" } = useNextTheme()
+  const { theme, mounted } = useTheme()
+  
+  // If not mounted (SSR), use a default theme
+  const currentTheme = mounted ? theme : "light"
 
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme={currentTheme as ToasterProps["theme"]}
       className="toaster group"
       toastOptions={{
         classNames: {
