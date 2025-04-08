@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Ruler, SquareGantt, Cube } from 'lucide-react';
+import { Ruler, Square, Box } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type DimensionType = 'length' | 'area' | 'volume';
@@ -17,8 +17,8 @@ const DimensionSelector: React.FC<DimensionSelectorProps> = ({
 }) => {
   const dimensions = [
     { id: 'length', name: 'Length', icon: <Ruler className="h-4 w-4 mr-2" /> },
-    { id: 'area', name: 'Area', icon: <SquareGantt className="h-4 w-4 mr-2" /> },
-    { id: 'volume', name: 'Volume', icon: <Cube className="h-4 w-4 mr-2" /> }
+    { id: 'area', name: 'Area', icon: <Square className="h-4 w-4 mr-2" /> },
+    { id: 'volume', name: 'Volume', icon: <Box className="h-4 w-4 mr-2" /> }
   ] as const;
 
   return (
