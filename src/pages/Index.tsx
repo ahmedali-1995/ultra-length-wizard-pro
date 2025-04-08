@@ -4,6 +4,9 @@ import { Helmet } from 'react-helmet';
 import UnitConverter from '@/components/UnitConverter';
 import Footer from '@/components/Footer';
 import { updateSEO } from '@/utils/seoUtils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
+import ConversionVisualizer from '@/components/ConversionVisualizer';
 
 const Index = () => {
   useEffect(() => {
@@ -13,15 +16,15 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>UltraLength Wizard Pro - Advanced Length Converter Tool</title>
-        <meta name="description" content="Convert between any length units with this advanced, user-friendly conversion tool. Support for metric, imperial, astronomical and ancient units." />
-        <meta name="keywords" content="length converter, unit converter, meter to feet, metric conversion, imperial units, distance calculator, measurement tool, precise unit conversion, scientific measurement, length measurement" />
-        <meta property="og:title" content="UltraLength Wizard Pro - Advanced Length Converter Tool" />
-        <meta property="og:description" content="Convert between any length units with this advanced, user-friendly conversion tool." />
+        <title>UltraLength Wizard Pro - Advanced Unit Converter Tool</title>
+        <meta name="description" content="Convert between any units with this advanced, user-friendly conversion tool. Support for metric, imperial, astronomical and ancient units." />
+        <meta name="keywords" content="unit converter, length converter, area converter, volume converter, metric conversion, imperial units, distance calculator, measurement tool, precise unit conversion, scientific measurement" />
+        <meta property="og:title" content="UltraLength Wizard Pro - Advanced Unit Converter Tool" />
+        <meta property="og:description" content="Convert between any units with this advanced, user-friendly conversion tool." />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="UltraLength Wizard Pro - Advanced Length Converter Tool" />
-        <meta name="twitter:description" content="Convert between any length units with this advanced, user-friendly conversion tool." />
+        <meta name="twitter:title" content="UltraLength Wizard Pro - Advanced Unit Converter Tool" />
+        <meta name="twitter:description" content="Convert between any units with this advanced, user-friendly conversion tool." />
         <link rel="canonical" href="https://ultralength.lovable.app" />
       </Helmet>
 
@@ -32,7 +35,7 @@ const Index = () => {
               UltraLength Wizard Pro
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-[700px] mx-auto">
-              The most advanced length converter with support for metric, imperial, astronomical, and ancient units.
+              The most advanced unit converter with support for length, area, volume, and more.
             </p>
           </div>
         </header>
@@ -40,52 +43,68 @@ const Index = () => {
         <main className="flex-1 container py-8">
           <div className="grid gap-8">
             <section>
-              <UnitConverter />
+              <Tabs defaultValue="converter" className="w-full">
+                <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+                  <TabsTrigger value="converter">Converter</TabsTrigger>
+                  <TabsTrigger value="visualizer">Visualizer</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="converter" className="mt-0">
+                  <UnitConverter />
+                </TabsContent>
+                
+                <TabsContent value="visualizer" className="mt-0">
+                  <Card className="p-6">
+                    <ConversionVisualizer />
+                  </Card>
+                </TabsContent>
+              </Tabs>
             </section>
             
             <section className="mt-10 space-y-6 max-w-3xl mx-auto">
               <h2 className="text-2xl font-bold tracking-tight">Why Use UltraLength Wizard Pro?</h2>
               
               <div className="grid gap-6 md:grid-cols-3">
-                <div className="p-4 border rounded-lg bg-card">
-                  <h3 className="font-semibold mb-2">Comprehensive Coverage</h3>
+                <div className="p-4 border rounded-lg bg-card hover-card">
+                  <h3 className="font-semibold mb-2">Multi-Dimensional</h3>
                   <p className="text-sm text-muted-foreground">
-                    From nanometers to light-years, convert between any units of length instantly.
+                    Convert between length, area, volume, and more with precision and ease.
                   </p>
                 </div>
                 
-                <div className="p-4 border rounded-lg bg-card">
-                  <h3 className="font-semibold mb-2">High Precision</h3>
+                <div className="p-4 border rounded-lg bg-card hover-card">
+                  <h3 className="font-semibold mb-2">Visual Learning</h3>
                   <p className="text-sm text-muted-foreground">
-                    Get results with scientific precision for all your professional needs.
+                    See the relative sizes and learn how different units compare visually.
                   </p>
                 </div>
                 
-                <div className="p-4 border rounded-lg bg-card">
-                  <h3 className="font-semibold mb-2">User Friendly</h3>
+                <div className="p-4 border rounded-lg bg-card hover-card">
+                  <h3 className="font-semibold mb-2">Scientific Precision</h3>
                   <p className="text-sm text-muted-foreground">
-                    Intuitive interface with instant results and conversion history tracking.
+                    Get results with scientific notation and custom precision for professional needs.
                   </p>
                 </div>
               </div>
             </section>
             
             <section className="mt-10 max-w-3xl mx-auto">
-              <h2 className="text-2xl font-bold tracking-tight mb-4">About Length Units</h2>
+              <h2 className="text-2xl font-bold tracking-tight mb-4">About Measurement Units</h2>
               <div className="prose prose-sm max-w-none">
                 <p>
-                  Length is a fundamental measurement that describes the distance between two points.
-                  Throughout history, different civilizations developed their own units of length,
-                  often based on parts of the human body or common objects.
+                  Measurement is fundamental to understanding our world. Throughout history,
+                  different civilizations developed their own systems of units, often based on
+                  parts of the human body or common objects.
                 </p>
                 <p>
-                  Today, the International System of Units (SI) uses the meter as the standard unit of length,
-                  defined as the distance light travels in a vacuum in 1/299,792,458 of a second.
-                  However, many countries still use imperial units like feet and inches in daily life.
+                  Today, the International System of Units (SI) provides standardized units for
+                  scientific and everyday use worldwide. The meter (length), square meter (area),
+                  and cubic meter (volume) are the base units for their respective dimensions.
                 </p>
                 <p>
                   UltraLength Wizard Pro supports both modern and historical units, making it the perfect
-                  tool for students, professionals, and anyone who needs to convert between different length measurements.
+                  tool for students, professionals, engineers, scientists, and anyone who needs to convert
+                  between different measurement systems.
                 </p>
               </div>
             </section>

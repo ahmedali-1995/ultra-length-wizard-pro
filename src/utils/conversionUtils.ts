@@ -148,6 +148,180 @@ export const lengthUnits: ConversionUnit[] = [
   },
 ];
 
+// Area units (base unit: square meter, m²)
+export const areaUnits: ConversionUnit[] = [
+  // Metric
+  {
+    id: 'square-millimeter',
+    name: 'Square Millimeter',
+    abbreviation: 'mm²',
+    group: 'metric',
+    toBase: (value) => value * 1e-6,
+    fromBase: (value) => value / 1e-6
+  },
+  {
+    id: 'square-centimeter',
+    name: 'Square Centimeter',
+    abbreviation: 'cm²',
+    group: 'metric',
+    toBase: (value) => value * 1e-4,
+    fromBase: (value) => value / 1e-4
+  },
+  {
+    id: 'square-meter',
+    name: 'Square Meter',
+    abbreviation: 'm²',
+    group: 'metric',
+    toBase: (value) => value,
+    fromBase: (value) => value
+  },
+  {
+    id: 'hectare',
+    name: 'Hectare',
+    abbreviation: 'ha',
+    group: 'metric',
+    toBase: (value) => value * 10000,
+    fromBase: (value) => value / 10000
+  },
+  {
+    id: 'square-kilometer',
+    name: 'Square Kilometer',
+    abbreviation: 'km²',
+    group: 'metric',
+    toBase: (value) => value * 1e6,
+    fromBase: (value) => value / 1e6
+  },
+  
+  // Imperial
+  {
+    id: 'square-inch',
+    name: 'Square Inch',
+    abbreviation: 'in²',
+    group: 'imperial',
+    toBase: (value) => value * 0.00064516,
+    fromBase: (value) => value / 0.00064516
+  },
+  {
+    id: 'square-foot',
+    name: 'Square Foot',
+    abbreviation: 'ft²',
+    group: 'imperial',
+    toBase: (value) => value * 0.092903,
+    fromBase: (value) => value / 0.092903
+  },
+  {
+    id: 'square-yard',
+    name: 'Square Yard',
+    abbreviation: 'yd²',
+    group: 'imperial',
+    toBase: (value) => value * 0.836127,
+    fromBase: (value) => value / 0.836127
+  },
+  {
+    id: 'acre',
+    name: 'Acre',
+    abbreviation: 'ac',
+    group: 'imperial',
+    toBase: (value) => value * 4046.86,
+    fromBase: (value) => value / 4046.86
+  },
+  {
+    id: 'square-mile',
+    name: 'Square Mile',
+    abbreviation: 'mi²',
+    group: 'imperial',
+    toBase: (value) => value * 2589988.11,
+    fromBase: (value) => value / 2589988.11
+  }
+];
+
+// Volume units (base unit: cubic meter, m³)
+export const volumeUnits: ConversionUnit[] = [
+  // Metric
+  {
+    id: 'cubic-millimeter',
+    name: 'Cubic Millimeter',
+    abbreviation: 'mm³',
+    group: 'metric',
+    toBase: (value) => value * 1e-9,
+    fromBase: (value) => value / 1e-9
+  },
+  {
+    id: 'cubic-centimeter',
+    name: 'Cubic Centimeter',
+    abbreviation: 'cm³',
+    group: 'metric',
+    toBase: (value) => value * 1e-6,
+    fromBase: (value) => value / 1e-6
+  },
+  {
+    id: 'milliliter',
+    name: 'Milliliter',
+    abbreviation: 'mL',
+    group: 'metric',
+    toBase: (value) => value * 1e-6,
+    fromBase: (value) => value / 1e-6
+  },
+  {
+    id: 'liter',
+    name: 'Liter',
+    abbreviation: 'L',
+    group: 'metric',
+    toBase: (value) => value * 0.001,
+    fromBase: (value) => value / 0.001
+  },
+  {
+    id: 'cubic-meter',
+    name: 'Cubic Meter',
+    abbreviation: 'm³',
+    group: 'metric',
+    toBase: (value) => value,
+    fromBase: (value) => value
+  },
+  
+  // Imperial & US
+  {
+    id: 'cubic-inch',
+    name: 'Cubic Inch',
+    abbreviation: 'in³',
+    group: 'imperial',
+    toBase: (value) => value * 1.6387e-5,
+    fromBase: (value) => value / 1.6387e-5
+  },
+  {
+    id: 'cubic-foot',
+    name: 'Cubic Foot',
+    abbreviation: 'ft³',
+    group: 'imperial',
+    toBase: (value) => value * 0.0283168,
+    fromBase: (value) => value / 0.0283168
+  },
+  {
+    id: 'us-gallon',
+    name: 'US Gallon',
+    abbreviation: 'gal',
+    group: 'us',
+    toBase: (value) => value * 0.00378541,
+    fromBase: (value) => value / 0.00378541
+  },
+  {
+    id: 'imperial-gallon',
+    name: 'Imperial Gallon',
+    abbreviation: 'imp gal',
+    group: 'imperial',
+    toBase: (value) => value * 0.00454609,
+    fromBase: (value) => value / 0.00454609
+  },
+  {
+    id: 'barrel',
+    name: 'Oil Barrel',
+    abbreviation: 'bbl',
+    group: 'us',
+    toBase: (value) => value * 0.158987,
+    fromBase: (value) => value / 0.158987
+  }
+];
+
 // Group units by category
 export const groupedLengthUnits = lengthUnits.reduce<Record<UnitGroup, ConversionUnit[]>>(
   (groups, unit) => {
@@ -160,21 +334,70 @@ export const groupedLengthUnits = lengthUnits.reduce<Record<UnitGroup, Conversio
   { metric: [], imperial: [], us: [], ancient: [], astronomical: [], maritime: [], other: [] }
 );
 
-// Convert between any two units
+// Group area units by category
+export const groupedAreaUnits = areaUnits.reduce<Record<UnitGroup, ConversionUnit[]>>(
+  (groups, unit) => {
+    if (!groups[unit.group]) {
+      groups[unit.group] = [];
+    }
+    groups[unit.group].push(unit);
+    return groups;
+  },
+  { metric: [], imperial: [], us: [], ancient: [], astronomical: [], maritime: [], other: [] }
+);
+
+// Group volume units by category
+export const groupedVolumeUnits = volumeUnits.reduce<Record<UnitGroup, ConversionUnit[]>>(
+  (groups, unit) => {
+    if (!groups[unit.group]) {
+      groups[unit.group] = [];
+    }
+    groups[unit.group].push(unit);
+    return groups;
+  },
+  { metric: [], imperial: [], us: [], ancient: [], astronomical: [], maritime: [], other: [] }
+);
+
+// All units mapped by dimension
+export const allUnitsByDimension = {
+  length: lengthUnits,
+  area: areaUnits,
+  volume: volumeUnits
+};
+
+// All grouped units mapped by dimension
+export const allGroupedUnitsByDimension = {
+  length: groupedLengthUnits,
+  area: groupedAreaUnits,
+  volume: groupedVolumeUnits
+};
+
+// Convert between any two units within the same dimension
 export const convert = (
   value: number,
   fromUnitId: string,
   toUnitId: string
 ): number => {
   // Find the units
-  const fromUnit = lengthUnits.find(unit => unit.id === fromUnitId);
-  const toUnit = lengthUnits.find(unit => unit.id === toUnitId);
+  let fromUnit, toUnit;
   
-  if (!fromUnit || !toUnit) {
-    throw new Error('Invalid units specified');
+  // Search in all unit types (length, area, volume)
+  for (const dimension of Object.keys(allUnitsByDimension) as Array<keyof typeof allUnitsByDimension>) {
+    const fromUnitCandidate = allUnitsByDimension[dimension].find(unit => unit.id === fromUnitId);
+    const toUnitCandidate = allUnitsByDimension[dimension].find(unit => unit.id === toUnitId);
+    
+    if (fromUnitCandidate && toUnitCandidate) {
+      fromUnit = fromUnitCandidate;
+      toUnit = toUnitCandidate;
+      break;
+    }
   }
   
-  // Convert to base unit (meter) then to target unit
+  if (!fromUnit || !toUnit) {
+    throw new Error('Invalid units specified or units from different dimensions');
+  }
+  
+  // Convert to base unit then to target unit
   const baseValue = fromUnit.toBase(value);
   return toUnit.fromBase(baseValue);
 };
@@ -212,4 +435,84 @@ export const suggestUnit = (value: number): string => {
   if (absValue >= 0.001) return 'millimeter';
   if (absValue >= 1e-6) return 'micrometer';
   return 'nanometer';
+};
+
+// Get the conversion formula between two units
+export const getConversionFormula = (
+  fromUnitId: string,
+  toUnitId: string
+): string => {
+  // Find the units
+  let fromUnit, toUnit, dimension;
+  
+  // Search in all unit types
+  for (const dim of Object.keys(allUnitsByDimension) as Array<keyof typeof allUnitsByDimension>) {
+    const fromUnitCandidate = allUnitsByDimension[dim].find(unit => unit.id === fromUnitId);
+    const toUnitCandidate = allUnitsByDimension[dim].find(unit => unit.id === toUnitId);
+    
+    if (fromUnitCandidate && toUnitCandidate) {
+      fromUnit = fromUnitCandidate;
+      toUnit = toUnitCandidate;
+      dimension = dim;
+      break;
+    }
+  }
+  
+  if (!fromUnit || !toUnit || !dimension) {
+    return 'Unknown conversion';
+  }
+  
+  // Get formula based on dimension
+  switch (dimension) {
+    case 'length':
+      if (fromUnitId === 'meter' && toUnitId !== 'meter') {
+        return `Divide by ${toUnit.toBase(1)}`;
+      } else if (fromUnitId !== 'meter' && toUnitId === 'meter') {
+        return `Multiply by ${fromUnit.toBase(1)}`;
+      } else {
+        return `Multiply by ${fromUnit.toBase(1)} then divide by ${toUnit.toBase(1)}`;
+      }
+    case 'area':
+      if (fromUnitId === 'square-meter' && toUnitId !== 'square-meter') {
+        return `Divide by ${toUnit.toBase(1)}`;
+      } else if (fromUnitId !== 'square-meter' && toUnitId === 'square-meter') {
+        return `Multiply by ${fromUnit.toBase(1)}`;
+      } else {
+        return `Multiply by ${fromUnit.toBase(1)} then divide by ${toUnit.toBase(1)}`;
+      }
+    case 'volume':
+      if (fromUnitId === 'cubic-meter' && toUnitId !== 'cubic-meter') {
+        return `Divide by ${toUnit.toBase(1)}`;
+      } else if (fromUnitId !== 'cubic-meter' && toUnitId === 'cubic-meter') {
+        return `Multiply by ${fromUnit.toBase(1)}`;
+      } else {
+        return `Multiply by ${fromUnit.toBase(1)} then divide by ${toUnit.toBase(1)}`;
+      }
+    default:
+      return 'Unknown conversion';
+  }
+};
+
+// Get the dimension (length, area, volume) for a unit
+export const getUnitDimension = (unitId: string): string => {
+  for (const dimension of Object.keys(allUnitsByDimension) as Array<keyof typeof allUnitsByDimension>) {
+    if (allUnitsByDimension[dimension].some(unit => unit.id === unitId)) {
+      return dimension;
+    }
+  }
+  return 'unknown';
+};
+
+// Check if two units are compatible (same dimension)
+export const areUnitsCompatible = (fromUnitId: string, toUnitId: string): boolean => {
+  return getUnitDimension(fromUnitId) === getUnitDimension(toUnitId);
+};
+
+// Get relative scale between units (for visualization)
+export const getRelativeScale = (fromUnitId: string, toUnitId: string): number => {
+  try {
+    return convert(1, fromUnitId, toUnitId);
+  } catch (e) {
+    return 0;
+  }
 };

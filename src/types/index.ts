@@ -1,4 +1,7 @@
 
+export type UnitGroup = 'metric' | 'imperial' | 'us' | 'ancient' | 'astronomical' | 'maritime' | 'other';
+export type UnitDimension = 'length' | 'area' | 'volume';
+
 export interface ConversionUnit {
   id: string;
   name: string;
@@ -8,7 +11,11 @@ export interface ConversionUnit {
   fromBase: (value: number) => number;
 }
 
-export type UnitGroup = 'metric' | 'imperial' | 'us' | 'ancient' | 'astronomical' | 'maritime' | 'other';
+export interface ConversionInput {
+  value: string;
+  fromUnit: string;
+  toUnit: string;
+}
 
 export interface ConversionResult {
   id: string;
@@ -19,8 +26,15 @@ export interface ConversionResult {
   toValue: number;
 }
 
-export interface ConversionInput {
-  value: string;
+export interface RelativeScale {
+  fromUnitId: string;
+  toUnitId: string;
+  ratio: number;
+}
+
+export interface Favorite {
+  id: string;
+  name: string;
   fromUnit: string;
   toUnit: string;
 }
