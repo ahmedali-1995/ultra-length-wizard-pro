@@ -35,7 +35,6 @@ const App = () => {
           <Route path="/area-converter" element={<AreaConverter />} />
           <Route path="/volume-converter" element={<VolumeConverter />} />
           <Route path="/common-conversions" element={<CommonConversions />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </TooltipProvider>

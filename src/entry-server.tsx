@@ -9,8 +9,8 @@ export function render(url: string) {
   try {
     // Create minimal mocks for browser-only APIs
     if (typeof window === 'undefined') {
-      // Avoid creating global.localStorage altogether
-      // React will handle the differences during hydration
+      // Do not create any global browser mocks to avoid hydration issues
+      // React will handle missing browser APIs appropriately during hydration
     }
     
     const html = renderToString(
