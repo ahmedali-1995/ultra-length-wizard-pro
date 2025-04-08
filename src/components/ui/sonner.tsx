@@ -1,12 +1,12 @@
 
-import { useTheme } from "next-themes"
+import { useTheme as useNextTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  // Use a default theme value for SSR
-  const { theme = "system" } = typeof window === 'undefined' ? { theme: "system" } : useTheme()
+  // For SSR, we need to use a default theme to avoid hydration mismatch
+  const { theme = "system" } = useNextTheme()
 
   return (
     <Sonner

@@ -9,34 +9,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Set up global browser API mocks for server-side rendering
 if (typeof window === 'undefined') {
-  // @ts-ignore - We're deliberately creating partial mock objects for SSR
-  global.window = {
-    matchMedia: () => ({
-      matches: false,
-      media: '',
-      onchange: null,
-      addListener: () => {},
-      removeListener: () => {},
-      addEventListener: () => {},
-      removeEventListener: () => {},
-      dispatchEvent: () => true,
-    }),
-    innerWidth: 1024,
-    localStorage: {
-      getItem: () => null,
-      setItem: () => null,
-      length: 0,
-      clear: () => {},
-      key: () => null,
-      removeItem: () => {}
-    }
-  };
-
-  // Create a minimal document object that provides essential properties
+  // Mock document object to reference in circular structure
   // @ts-ignore - We're deliberately creating partial mock objects for SSR
   const mockDocument = {
     URL: '',
-    documentElement: null, // Will be set below
     createElement: () => ({}),
     createTextNode: () => ({}),
     querySelector: () => null,
@@ -94,11 +70,34 @@ if (typeof window === 'undefined') {
   };
 
   // Establish circular reference
-  documentElement.ownerDocument = mockDocument;
   mockDocument.documentElement = documentElement;
+  documentElement.ownerDocument = mockDocument;
 
   // @ts-ignore - We're deliberately creating partial mock objects for SSR
   global.document = mockDocument;
+
+  // @ts-ignore - We're deliberately creating partial mock objects for SSR
+  global.window = {
+    matchMedia: () => ({
+      matches: false,
+      media: '',
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => true,
+    }),
+    innerWidth: 1024,
+    localStorage: {
+      getItem: () => null,
+      setItem: () => null,
+      length: 0,
+      clear: () => {},
+      key: () => null,
+      removeItem: () => {}
+    }
+  };
 }
 
 async function createServer() {

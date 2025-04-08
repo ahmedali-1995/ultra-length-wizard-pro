@@ -7,34 +7,10 @@ import { renderToString } from 'react-dom/server'
 // This helps with SSR by providing a simulated environment for components
 // that might rely on browser-only APIs
 if (typeof window === 'undefined') {
+  // Mock document object to reference in circular structure
   // @ts-ignore - We're deliberately creating partial mock objects for SSR
-  global.window = {
-    matchMedia: () => ({
-      matches: false,
-      media: '',
-      onchange: null,
-      addListener: () => {},
-      removeListener: () => {},
-      addEventListener: () => {},
-      removeEventListener: () => {},
-      dispatchEvent: () => true,
-    }),
-    innerWidth: 1024,
-    localStorage: {
-      getItem: () => null,
-      setItem: () => null,
-      length: 0,
-      clear: () => {},
-      key: () => null,
-      removeItem: () => {}
-    }
-  };
-
-  // Create a minimal document object that provides essential properties
-  // @ts-ignore - We're deliberately creating partial mock objects for SSR
-  const mockDocument = {
+  const mockDocument: Partial<Document> = {
     URL: '',
-    documentElement: null, // Will be set below
     createElement: () => ({}),
     createTextNode: () => ({}),
     querySelector: () => null,
@@ -48,7 +24,7 @@ if (typeof window === 'undefined') {
 
   // Create a minimal style declaration object
   // @ts-ignore - We're deliberately creating partial mock objects for SSR
-  const mockStyleDeclaration = {
+  const mockStyleDeclaration: Partial<CSSStyleDeclaration> = {
     cssText: '',
     length: 0,
     getPropertyPriority: () => '',
@@ -60,7 +36,8 @@ if (typeof window === 'undefined') {
   };
 
   // Set up documentElement with proper references
-  const documentElement = {
+  // @ts-ignore - We're deliberately creating partial mock objects for SSR
+  const documentElement: Partial<HTMLElement> = {
     classList: {
       add: () => {},
       remove: () => {},
@@ -92,11 +69,34 @@ if (typeof window === 'undefined') {
   };
 
   // Establish circular reference
-  documentElement.ownerDocument = mockDocument;
   mockDocument.documentElement = documentElement;
+  (documentElement as any).ownerDocument = mockDocument;
 
   // @ts-ignore - We're deliberately creating partial mock objects for SSR
   global.document = mockDocument;
+
+  // @ts-ignore - We're deliberately creating partial mock objects for SSR
+  global.window = {
+    matchMedia: () => ({
+      matches: false,
+      media: '',
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => true,
+    }),
+    innerWidth: 1024,
+    localStorage: {
+      getItem: () => null,
+      setItem: () => null,
+      length: 0,
+      clear: () => {},
+      key: () => null,
+      removeItem: () => {}
+    }
+  };
 }
 
 export function render(url: string, context = {}) {
