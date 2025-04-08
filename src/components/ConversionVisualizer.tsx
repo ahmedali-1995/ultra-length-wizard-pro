@@ -24,7 +24,9 @@ import {
 } from '@/utils/conversionUtils';
 import DimensionSelector from './DimensionSelector';
 import { toast } from 'sonner';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Maximize2, Minimize2, RefreshCcw, Info } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 const ConversionVisualizer: React.FC = () => {
   const [dimension, setDimension] = useState<'length' | 'area' | 'volume'>('length');
@@ -33,6 +35,8 @@ const ConversionVisualizer: React.FC = () => {
   const [value, setValue] = useState<string>('1');
   const [scale, setScale] = useState<number>(1);
   const [result, setResult] = useState<number | null>(null);
+  const [zoomLevel, setZoomLevel] = useState<number>(1);
+  const [autoScale, setAutoScale] = useState<boolean>(true);
   
   useEffect(() => {
     if (value && !isNaN(parseFloat(value))) {
@@ -51,6 +55,12 @@ const ConversionVisualizer: React.FC = () => {
         // Calculate relative scale for visualization
         const relativeScale = getRelativeScale(fromUnit, toUnit);
         setScale(relativeScale);
+        
+        // Auto adjust zoom if needed
+        if (autoScale) {
+          const newZoom = calculateIdealZoom(relativeScale);
+          setZoomLevel(newZoom);
+        }
       } catch (error) {
         console.error('Visualization error:', error);
         setResult(null);
@@ -58,7 +68,18 @@ const ConversionVisualizer: React.FC = () => {
     } else {
       setResult(null);
     }
-  }, [value, fromUnit, toUnit, dimension]);
+  }, [value, fromUnit, toUnit, dimension, autoScale]);
+  
+  // Helper function to calculate ideal zoom level based on scale
+  const calculateIdealZoom = (scale: number): number => {
+    if (scale > 1000) return 0.01;
+    if (scale > 100) return 0.1;
+    if (scale > 10) return 0.5;
+    if (scale < 0.001) return 100;
+    if (scale < 0.01) return 10;
+    if (scale < 0.1) return 5;
+    return 1;
+  };
   
   const handleDimensionChange = (newDimension: 'length' | 'area' | 'volume') => {
     setDimension(newDimension);
@@ -73,6 +94,11 @@ const ConversionVisualizer: React.FC = () => {
     setToUnit(defaultUnits[newDimension].to);
   };
   
+  const resetZoom = () => {
+    setZoomLevel(1);
+    setAutoScale(true);
+  };
+  
   const units = allUnitsByDimension[dimension];
   const groupedUnits = allGroupedUnitsByDimension[dimension];
   
@@ -80,6 +106,15 @@ const ConversionVisualizer: React.FC = () => {
     const unit = units.find(u => u.id === id);
     return unit ? unit.name : id;
   };
+  
+  const getUnitAbbreviation = (id: string): string => {
+    const unit = units.find(u => u.id === id);
+    return unit ? unit.abbreviation : id;
+  };
+  
+  // Calculate visual representation width
+  const fromBarWidth = 100; // Base width percentage
+  const toBarWidth = Math.min(Math.max((scale * 100 * zoomLevel), 5), 200); // Adjusted by scale and zoom
   
   return (
     <div className="space-y-6">
@@ -159,9 +194,9 @@ const ConversionVisualizer: React.FC = () => {
           
           <div className="bg-muted p-4 rounded-lg">
             <div className="flex items-center justify-between text-sm mb-2">
-              <span>1 {getUnitName(fromUnit)}</span>
+              <span>1 {getUnitName(fromUnit)} ({getUnitAbbreviation(fromUnit)})</span>
               <ArrowRight className="h-4 w-4 text-muted-foreground mx-2" />
-              <span>{scale ? formatValue(scale, 6) : '?'} {getUnitName(toUnit)}</span>
+              <span>{scale ? formatValue(scale, 6) : '?'} {getUnitName(toUnit)} ({getUnitAbbreviation(toUnit)})</span>
             </div>
             <div className="text-muted-foreground text-xs">
               {scale > 1 ? 
@@ -172,40 +207,105 @@ const ConversionVisualizer: React.FC = () => {
               }
             </div>
           </div>
+          
+          <div className="flex items-center space-x-2">
+            <Label htmlFor="zoom" className="min-w-20">Visual Zoom</Label>
+            <Slider 
+              id="zoom"
+              className="flex-1" 
+              value={[zoomLevel]} 
+              min={0.01} 
+              max={10} 
+              step={0.01}
+              onValueChange={(value) => {
+                setZoomLevel(value[0]);
+                setAutoScale(false);
+              }}
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={resetZoom}
+              title="Reset zoom"
+            >
+              <RefreshCcw className="h-4 w-4" />
+            </Button>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80">
+                <div className="space-y-2">
+                  <h4 className="font-semibold">Visual Zoom</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Adjust the zoom level to better visualize the relative sizes when there are extreme differences.
+                    Auto-scaling automatically sets an appropriate zoom level.
+                  </p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
         </div>
         
         <Card className="p-4 flex flex-col justify-center items-center overflow-hidden">
           <div className="text-center mb-4">
             <div className="font-semibold">Visual Comparison</div>
             <div className="text-sm text-muted-foreground">
-              (not to actual scale)
+              (Zoom level: {zoomLevel.toFixed(2)}x)
             </div>
           </div>
           
           {result !== null && (
-            <div className="w-full">
-              <div className="mb-8">
-                <div className="h-8 bg-primary/20 rounded-md w-full relative">
-                  <div className="absolute -top-6 left-0 text-xs">
-                    {value} {getUnitName(fromUnit)}
-                  </div>
+            <div className="w-full space-y-12 p-4">
+              <div>
+                <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                  <span>{value} {getUnitAbbreviation(fromUnit)}</span>
+                  <span>{getUnitName(fromUnit)}</span>
                 </div>
+                <motion.div 
+                  className="h-10 bg-primary/20 rounded-md w-full relative"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${fromBarWidth}%` }}
+                  transition={{ duration: 0.5 }}
+                />
               </div>
               
               <div>
-                <div 
-                  className="h-8 bg-primary rounded-md" 
-                  style={{ 
-                    width: `${Math.min(Math.max(scale * 100 / 2, 5), 100)}%` 
-                  }}
-                >
-                  <div className="absolute -top-6 left-0 text-xs">
-                    {result ? formatValue(result, 4) : '?'} {getUnitName(toUnit)}
-                  </div>
+                <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                  <span>{result ? formatValue(result, 4) : '?'} {getUnitAbbreviation(toUnit)}</span>
+                  <span>{getUnitName(toUnit)}</span>
                 </div>
+                <motion.div 
+                  className="h-10 bg-primary rounded-md relative"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${toBarWidth}%` }}
+                  transition={{ duration: 0.5 }}
+                />
               </div>
             </div>
           )}
+          
+          <div className="flex gap-2 mt-4">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setZoomLevel(Math.max(zoomLevel / 2, 0.01))}
+              className="flex items-center gap-1"
+            >
+              <Minimize2 className="h-4 w-4" />
+              <span>Zoom Out</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setZoomLevel(Math.min(zoomLevel * 2, 10))}
+              className="flex items-center gap-1"
+            >
+              <Maximize2 className="h-4 w-4" />
+              <span>Zoom In</span>
+            </Button>
+          </div>
         </Card>
       </div>
     </div>

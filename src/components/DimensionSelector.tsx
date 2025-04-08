@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Ruler, Square, Box } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 type DimensionType = 'length' | 'area' | 'volume';
 
@@ -22,22 +23,38 @@ const DimensionSelector: React.FC<DimensionSelectorProps> = ({
   ] as const;
 
   return (
-    <div className="flex flex-wrap gap-2 justify-center mb-4">
+    <div className="relative flex flex-wrap gap-2 justify-center mb-4">
       {dimensions.map((dim) => (
-        <Button
+        <motion.div
           key={dim.id}
-          variant={selectedDimension === dim.id ? 'default' : 'outline'}
-          size="sm"
-          className={cn(
-            "flex items-center gap-1.5",
-            selectedDimension === dim.id ? 'bg-primary text-primary-foreground' : ''
-          )}
-          onClick={() => onChange(dim.id)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          {dim.icon}
-          {dim.name}
-        </Button>
+          <Button
+            variant={selectedDimension === dim.id ? 'default' : 'outline'}
+            size="sm"
+            className={cn(
+              "flex items-center gap-1.5 transition-all duration-200",
+              selectedDimension === dim.id ? 'bg-primary text-primary-foreground shadow-md' : ''
+            )}
+            onClick={() => onChange(dim.id)}
+          >
+            {dim.icon}
+            {dim.name}
+          </Button>
+        </motion.div>
       ))}
+      
+      {/* Background indicator */}
+      <motion.div 
+        className="absolute bottom-0 h-0.5 bg-primary rounded-full"
+        initial={false}
+        animate={{ 
+          left: `${dimensions.findIndex(d => d.id === selectedDimension) * 33.33}%`,
+          width: '33.33%' 
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      />
     </div>
   );
 };
