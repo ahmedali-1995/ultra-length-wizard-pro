@@ -37,33 +37,30 @@ async function createServer() {
         // 2. Load the SSR entry module
         const { render } = await import('./dist/server/entry-server.js');
 
-        // 3. Render the app HTML
-        const appHtml = await render(url);
+        try {
+          // 3. Render the app HTML
+          const appHtml = await render(url);
 
-        // 4. Inject the app-rendered HTML into the template
-        const html = template.replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`);
+          // 4. Inject the app-rendered HTML into the template
+          const html = template.replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`);
 
-        // 5. Send the rendered HTML back
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
-      } catch (ssrError) {
-        console.error("SSR rendering failed:", ssrError);
-        
-        // If SSR fails, fall back to client-side rendering
+          // 5. Send the rendered HTML back
+          res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+        } catch (ssrError) {
+          console.error("SSR rendering failed:", ssrError);
+          
+          // If SSR fails, fall back to client-side rendering
+          res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+        }
+      } catch (err) {
+        console.error("Server error:", err);
+
+        // Send fallback HTML for client-side rendering
         res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
       }
     } catch (err) {
       console.error("Server error:", err);
-
-      // Send fallback HTML for client-side rendering
-      try {
-        const fallbackHtml = fs.readFileSync(
-          path.resolve(__dirname, 'dist/client/index.html'),
-          'utf-8'
-        );
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(fallbackHtml);
-      } catch (readError) {
-        res.status(500).send('Internal Server Error');
-      }
+      res.status(500).send('Internal Server Error');
     }
   });
 

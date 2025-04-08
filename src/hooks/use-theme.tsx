@@ -14,17 +14,19 @@ export function useTheme() {
     
     // Check for stored preference or system preference
     const setInitialTheme = () => {
-      try {
-        // Safe localStorage access for SSR
-        const storedTheme = localStorage.getItem('theme') as Theme;
-        if (storedTheme) {
-          setTheme(storedTheme);
-        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          setTheme('dark');
-        }
-      } catch (error) {
-        // Silently fail for SSR
-        console.error("Theme detection error:", error);
+      // Safe localStorage access for SSR
+      const storedTheme = typeof window !== 'undefined' 
+        ? window.localStorage.getItem('theme') as Theme || ''
+        : '';
+
+      if (storedTheme) {
+        setTheme(storedTheme);
+      } else if (
+        typeof window !== 'undefined' &&
+        window.matchMedia && 
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      ) {
+        setTheme('dark');
       }
     };
     
@@ -35,7 +37,7 @@ export function useTheme() {
   React.useEffect(() => {
     if (!mounted) return;
     
-    try {
+    if (typeof document !== 'undefined') {
       const root = document.documentElement;
       if (theme === 'dark') {
         root.classList.add('dark');
@@ -43,10 +45,9 @@ export function useTheme() {
         root.classList.remove('dark');
       }
       
-      localStorage.setItem('theme', theme);
-    } catch (error) {
-      // Silently fail for SSR
-      console.error("Theme application error:", error);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('theme', theme);
+      }
     }
   }, [theme, mounted]);
 

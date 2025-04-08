@@ -14,12 +14,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
     setMounted(true);
   }, []);
   
-  // Don't try to render during SSR
+  // Don't render during SSR
   if (!mounted) {
     return null;
   }
   
-  // Get theme safely
   const { theme = "light" } = useTheme();
   
   return (

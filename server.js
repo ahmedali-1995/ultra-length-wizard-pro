@@ -32,31 +32,37 @@ async function createServer() {
       // 2. Apply Vite HTML transforms
       template = await vite.transformIndexHtml(url, template);
 
-      // 3. Load the server entry
-      const { render } = await vite.ssrLoadModule('/src/entry-server.tsx');
-
       try {
-        // 4. Render the app HTML
-        const appHtml = await render(url);
+        // 3. Load the server entry
+        const { render } = await vite.ssrLoadModule('/src/entry-server.tsx');
 
-        // 5. Inject the app-rendered HTML into the template
-        const html = template.replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`);
+        try {
+          // 4. Render the app HTML
+          const appHtml = await render(url);
 
-        // 6. Send the rendered HTML back
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
-      } catch (ssrError) {
-        console.error("SSR render error:", ssrError);
-        // Fall back to client-side rendering if SSR fails
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+          // 5. Inject the app-rendered HTML into the template
+          const html = template.replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`);
+
+          // 6. Send the rendered HTML back
+          res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+        } catch (ssrError) {
+          console.error("SSR render error:", ssrError);
+          // Fall back to client-side rendering if SSR fails
+          res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+        }
+      } catch (e) {
+        // If an error is caught, let Vite fix the stack trace
+        vite.ssrFixStacktrace(e);
+        console.error("Server error:", e);
+        
+        // Send fallback HTML for client-side rendering
+        const fallbackHTML = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(fallbackHTML);
       }
     } catch (e) {
-      // If an error is caught, let Vite fix the stack trace
       vite.ssrFixStacktrace(e);
       console.error("Server error:", e);
-      
-      // Send fallback HTML for client-side rendering
-      const fallbackHTML = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(fallbackHTML);
+      next(e);
     }
   });
 

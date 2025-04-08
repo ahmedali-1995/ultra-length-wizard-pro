@@ -9,11 +9,8 @@ export function render(url: string) {
   try {
     // Create minimal mocks for browser-only APIs
     if (typeof window === 'undefined') {
-      // Only apply the minimal mocks needed for SSR
-      global.localStorage = {
-        getItem: () => null,
-        setItem: () => {},
-      } as any;
+      // Avoid creating global.localStorage altogether
+      // React will handle the differences during hydration
     }
     
     const html = renderToString(
