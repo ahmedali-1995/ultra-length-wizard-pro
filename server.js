@@ -49,7 +49,8 @@ if (typeof window === 'undefined') {
         forEach: () => {},
         keys: () => [][Symbol.iterator](),
         values: () => [][Symbol.iterator](),
-        toString: () => ''
+        toString: () => '',
+        [Symbol.iterator]: () => [][Symbol.iterator]()
       }
     }
   };
