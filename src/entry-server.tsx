@@ -1,43 +1,32 @@
 
-import React from 'react'
-import { StaticRouter } from 'react-router-dom/server'
-import App from './App'
-import { renderToString } from 'react-dom/server'
+import React from 'react';
+import { StaticRouter } from 'react-router-dom/server';
+import App from './App';
+import { renderToString } from 'react-dom/server';
 
 // This helps with SSR by providing a simulated environment for components
 // that might rely on browser-only APIs
 if (typeof window === 'undefined') {
-  // Use a simplified mocking approach with type assertion
-  // This avoids TypeScript errors while providing minimal mocks
-  global.window = {
-    matchMedia: () => ({
-      matches: false,
-      addEventListener: () => {},
-      removeEventListener: () => {},
-    }),
-    localStorage: {
-      getItem: () => null,
-      setItem: () => {},
-      removeItem: () => {},
-    },
-    document: {},
-    navigator: { userAgent: '' },
-    location: { pathname: '/' },
-  } as any;
-  
+  // Simplify mocks to only the absolute minimum required
+  global.window = {} as any;
   global.document = {
-    documentElement: { classList: { add: () => {}, remove: () => {} } },
     createElement: () => ({}),
-    querySelector: () => null,
+    querySelector: () => null
   } as any;
 }
 
-export function render(url: string, context = {}) {
-  const html = renderToString(
-    <StaticRouter location={url}>
-      <App />
-    </StaticRouter>
-  )
-  
-  return html
+export function render(url: string) {
+  // Try-catch to avoid server crashes on rendering errors
+  try {
+    const html = renderToString(
+      <StaticRouter location={url}>
+        <App />
+      </StaticRouter>
+    );
+    return html;
+  } catch (error) {
+    console.error("Server rendering error:", error);
+    // Return empty div as fallback when SSR fails
+    return '<div id="root"></div>';
+  }
 }

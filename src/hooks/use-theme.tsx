@@ -20,8 +20,7 @@ export function useTheme() {
         setTheme('dark');
       }
     } catch (error) {
-      // If localStorage or matchMedia fails (e.g., during SSR), fallback to light theme
-      console.error("Error accessing browser APIs:", error);
+      // Silently fail for SSR
     }
   }, []);
   
@@ -37,13 +36,9 @@ export function useTheme() {
         root.classList.remove('dark');
       }
       
-      // Don't use localStorage during SSR
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('theme', theme);
-      }
+      localStorage.setItem('theme', theme);
     } catch (error) {
-      // Handle any errors during SSR
-      console.error("Error updating theme:", error);
+      // Silently fail for SSR
     }
   }, [theme, mounted]);
 
@@ -54,7 +49,6 @@ export function useTheme() {
   return { 
     theme, 
     toggleTheme,
-    // Return if component is mounted to avoid hydration issues
     mounted
   };
-};
+}

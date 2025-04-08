@@ -1,23 +1,11 @@
 
-import { useTheme } from "@/hooks/use-theme"
-import { Toaster as Sonner } from "sonner"
-import { useEffect, useState } from "react"
+import { useTheme } from "@/hooks/use-theme";
+import { Toaster as Sonner } from "sonner";
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
+type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "light" } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  
-  // Only mount the component after client-side hydration
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-  
-  // Don't render during SSR or before hydration is complete
-  if (!mounted) {
-    return null
-  }
+  const { theme = "light" } = useTheme();
   
   return (
     <Sonner
@@ -36,7 +24,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       {...props}
     />
-  )
-}
+  );
+};
 
-export { Toaster }
+export { Toaster };

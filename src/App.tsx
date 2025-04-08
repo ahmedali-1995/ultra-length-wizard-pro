@@ -1,6 +1,5 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { lazy, Suspense } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
@@ -11,13 +10,28 @@ import AreaConverter from "./pages/AreaConverter";
 import VolumeConverter from "./pages/VolumeConverter";
 import CommonConversions from "./pages/CommonConversions";
 
+// Import regular Toaster for server-side rendering
+import { Toaster } from "@/components/ui/toaster";
+
+// Use lazy loading for client-only components
+const ClientOnlySonner = lazy(() => 
+  import("./components/ClientOnlySonner").then(mod => ({ 
+    default: mod.ClientOnlySonner 
+  }))
+);
+
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
-      <Sonner />
+      {/* Only render Sonner on the client */}
+      {typeof window !== 'undefined' && (
+        <Suspense fallback={null}>
+          <ClientOnlySonner />
+        </Suspense>
+      )}
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/length-converter" element={<LengthConverter />} />
