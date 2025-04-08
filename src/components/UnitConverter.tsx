@@ -23,7 +23,11 @@ import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, Dr
 import { Switch } from "@/components/ui/switch";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
-const UnitConverter: React.FC = () => {
+interface UnitConverterProps {
+  defaultDimension?: 'length' | 'area' | 'volume';
+}
+
+const UnitConverter: React.FC<UnitConverterProps> = ({ defaultDimension = 'length' }) => {
   // Main state
   const [input, setInput] = useState<ConversionInput>({
     value: '1',
@@ -37,7 +41,7 @@ const UnitConverter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('converter');
   const [comparisonUnits, setComparisonUnits] = useState<Array<{id: string, name: string}>>([]);
   const [showScientificNotation, setShowScientificNotation] = useState<boolean>(false);
-  const [dimension, setDimension] = useState<'length' | 'area' | 'volume'>('length');
+  const [dimension, setDimension] = useState<'length' | 'area' | 'volume'>(defaultDimension);
   const [showFormula, setShowFormula] = useState<boolean>(false);
   
   // Update the result when any input changes
