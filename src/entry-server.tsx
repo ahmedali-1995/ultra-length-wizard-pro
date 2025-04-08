@@ -7,12 +7,12 @@ import { renderToString } from 'react-dom/server';
 export function render(url: string) {
   // Try-catch to avoid server crashes on rendering errors
   try {
-    // Create a simple mock for browser-only APIs
+    // Create minimal mocks for browser-only APIs
     if (typeof window === 'undefined') {
-      // Only apply minimal mocks needed for SSR
+      // Only apply the minimal mocks needed for SSR
       global.localStorage = {
         getItem: () => null,
-        setItem: () => null,
+        setItem: () => {},
       } as any;
     }
     

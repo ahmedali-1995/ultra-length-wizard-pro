@@ -6,16 +6,16 @@ import { Toaster } from "sonner";
 
 // This component only renders on the client side
 export const ClientOnlySonner = () => {
-  const [mounted, setMounted] = React.useState(false);
+  const [isMounted, setIsMounted] = React.useState(false);
 
   React.useEffect(() => {
-    setMounted(true);
+    setIsMounted(true);
   }, []);
 
   // Don't render anything during SSR
-  if (!mounted) return null;
+  if (!isMounted) return null;
   
-  return <Toaster className="toaster group" />;
+  return <Toaster position="bottom-right" className="toaster group" />;
 };
 
 export default ClientOnlySonner;

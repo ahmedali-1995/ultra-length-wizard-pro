@@ -45,16 +45,16 @@ async function createServer() {
         // 6. Send the rendered HTML back
         res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
       } catch (ssrError) {
-        // If SSR fails, send client-only version
         console.error("SSR render error:", ssrError);
+        // Fall back to client-side rendering if SSR fails
         res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
       }
     } catch (e) {
       // If an error is caught, let Vite fix the stack trace
       vite.ssrFixStacktrace(e);
-      console.error("SSR Error:", e);
+      console.error("Server error:", e);
       
-      // Send plain index.html for client-side rendering as fallback
+      // Send fallback HTML for client-side rendering
       const fallbackHTML = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
       res.status(200).set({ 'Content-Type': 'text/html' }).end(fallbackHTML);
     }

@@ -16,13 +16,11 @@ export function useTheme() {
     const setInitialTheme = () => {
       try {
         // Safe localStorage access for SSR
-        if (typeof window !== 'undefined') {
-          const storedTheme = localStorage.getItem('theme') as Theme;
-          if (storedTheme) {
-            setTheme(storedTheme);
-          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            setTheme('dark');
-          }
+        const storedTheme = localStorage.getItem('theme') as Theme;
+        if (storedTheme) {
+          setTheme(storedTheme);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          setTheme('dark');
         }
       } catch (error) {
         // Silently fail for SSR
@@ -38,16 +36,14 @@ export function useTheme() {
     if (!mounted) return;
     
     try {
-      if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-        const root = document.documentElement;
-        if (theme === 'dark') {
-          root.classList.add('dark');
-        } else {
-          root.classList.remove('dark');
-        }
-        
-        localStorage.setItem('theme', theme);
+      const root = document.documentElement;
+      if (theme === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
       }
+      
+      localStorage.setItem('theme', theme);
     } catch (error) {
       // Silently fail for SSR
       console.error("Theme application error:", error);

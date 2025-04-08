@@ -7,7 +7,6 @@ import compression from 'compression';
 import serveStatic from 'serve-static';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const isProduction = process.env.NODE_ENV === 'production';
 
 async function createServer() {
   const app = express();
@@ -49,18 +48,22 @@ async function createServer() {
       } catch (ssrError) {
         console.error("SSR rendering failed:", ssrError);
         
-        // If SSR fails, serve the client-side version
+        // If SSR fails, fall back to client-side rendering
         res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
       }
     } catch (err) {
-      console.error("Production server error:", err);
+      console.error("Server error:", err);
 
-      // Fallback to client-side rendering by serving the index.html
-      const fallbackHtml = fs.readFileSync(
-        path.resolve(__dirname, 'dist/client/index.html'),
-        'utf-8'
-      );
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(fallbackHtml);
+      // Send fallback HTML for client-side rendering
+      try {
+        const fallbackHtml = fs.readFileSync(
+          path.resolve(__dirname, 'dist/client/index.html'),
+          'utf-8'
+        );
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(fallbackHtml);
+      } catch (readError) {
+        res.status(500).send('Internal Server Error');
+      }
     }
   });
 

@@ -1,4 +1,6 @@
 
+"use client";
+
 import { useTheme } from "@/hooks/use-theme";
 import { Toaster as Sonner } from "sonner";
 import { useState, useEffect } from "react";
@@ -23,6 +25,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
+      position="bottom-right"
       className="toaster group"
       toastOptions={{
         classNames: {

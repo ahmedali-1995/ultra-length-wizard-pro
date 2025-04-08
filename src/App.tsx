@@ -11,22 +11,23 @@ import VolumeConverter from "./pages/VolumeConverter";
 import CommonConversions from "./pages/CommonConversions";
 import ClientOnlySonner from "./components/ClientOnlySonner";
 
+// Create the query client outside the component to avoid recreation
 const queryClient = new QueryClient();
 
 const App = () => {
   // Use state to track client-side rendering
-  const [isClient, setIsClient] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   
   // Effect only runs on the client
   useEffect(() => {
-    setIsClient(true);
+    setIsMounted(true);
   }, []);
   
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         {/* Only render client components when on the client */}
-        {isClient && <ClientOnlySonner />}
+        {isMounted && <ClientOnlySonner />}
         
         <Routes>
           <Route path="/" element={<Index />} />
