@@ -48,9 +48,9 @@ async function createServer() {
       vite.ssrFixStacktrace(e);
       console.error("SSR Error:", e);
       
-      // Force client-side rendering on error
-      const basicHtml = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(basicHtml);
+      // Force client-side rendering on error - don't pass server-rendered content that might cause hydration errors
+      const clientHTML = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
+      res.status(200).set({ 'Content-Type': 'text/html' }).end(clientHTML);
     }
   });
 

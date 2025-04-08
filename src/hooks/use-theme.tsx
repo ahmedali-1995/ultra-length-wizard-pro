@@ -12,24 +12,26 @@ export function useTheme() {
     setMounted(true);
     
     // Check for stored preference or system preference
-    try {
-      if (typeof window !== 'undefined') {
+    const setInitialTheme = () => {
+      try {
         const storedTheme = localStorage.getItem('theme') as Theme;
         if (storedTheme) {
           setTheme(storedTheme);
         } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
           setTheme('dark');
         }
+      } catch (error) {
+        // Silently fail for SSR
+        console.error("Theme detection error:", error);
       }
-    } catch (error) {
-      // Silently fail for SSR
-      console.error("Theme detection error:", error);
-    }
+    };
+    
+    setInitialTheme();
   }, []);
   
   // Apply theme effect - only run when mounted and theme changes
   React.useEffect(() => {
-    if (!mounted || typeof document === 'undefined') return;
+    if (!mounted) return;
     
     try {
       const root = document.documentElement;

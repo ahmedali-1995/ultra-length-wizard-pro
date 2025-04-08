@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 
 export const ClientOnlySonner = () => {
   const [mounted, setMounted] = useState(false);
@@ -11,10 +11,11 @@ export const ClientOnlySonner = () => {
     setMounted(true);
   }, []);
 
+  // Don't render anything during SSR or before hydration completes
   if (!mounted) return null;
   
-  // Only render Sonner when mounted (client-side)
-  return <Sonner />;
+  // Use the base Sonner directly to avoid any theme-related hydration issues
+  return <Toaster className="toaster group" />;
 };
 
 export default ClientOnlySonner;

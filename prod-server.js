@@ -9,13 +9,6 @@ import serveStatic from 'serve-static';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProduction = process.env.NODE_ENV === 'production';
 
-// The manifest is generated after build
-const manifest = isProduction
-  ? JSON.parse(
-      fs.readFileSync(path.resolve(__dirname, 'dist/client/.vite/ssr-manifest.json'), 'utf-8')
-    )
-  : {};
-
 async function createServer() {
   const app = express();
   
@@ -54,7 +47,8 @@ async function createServer() {
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
     } catch (err) {
       console.error("Production SSR error:", err);
-      // Force client-side rendering on error
+
+      // Force client-side rendering on error - don't serve server-rendered HTML that might cause hydration issues
       const fallbackHtml = fs.readFileSync(
         path.resolve(__dirname, 'dist/client/index.html'),
         'utf-8'
