@@ -3,22 +3,11 @@
 
 import { useTheme } from "@/hooks/use-theme";
 import { Toaster as Sonner } from "sonner";
-import { useState, useEffect } from "react";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  
-  // Don't render during SSR
-  if (!mounted) {
-    return null;
-  }
-  
+  // Don't try to access theme during SSR
   const { theme = "light" } = useTheme();
   
   return (

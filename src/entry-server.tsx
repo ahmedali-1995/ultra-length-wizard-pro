@@ -7,11 +7,7 @@ import { renderToString } from 'react-dom/server';
 export function render(url: string) {
   // Try-catch to avoid server crashes on rendering errors
   try {
-    // Create minimal mocks for browser-only APIs
-    if (typeof window === 'undefined') {
-      // Do not create any global browser mocks to avoid hydration issues
-      // React will handle missing browser APIs appropriately during hydration
-    }
+    // Don't create any browser mocks to avoid hydration issues
     
     const html = renderToString(
       <StaticRouter location={url}>

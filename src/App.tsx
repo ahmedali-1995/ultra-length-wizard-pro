@@ -9,7 +9,7 @@ import LengthConverter from "./pages/LengthConverter";
 import AreaConverter from "./pages/AreaConverter";
 import VolumeConverter from "./pages/VolumeConverter";
 import CommonConversions from "./pages/CommonConversions";
-import { Toaster } from "./components/ui/sonner";
+import ClientOnlyToaster from "./components/ClientOnlyToaster";
 
 // Create the query client outside the component to avoid recreation
 const queryClient = new QueryClient();
@@ -27,7 +27,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         {/* Only render client components when on the client */}
-        {isMounted && <Toaster />}
+        {isMounted && <ClientOnlyToaster />}
         
         <Routes>
           <Route path="/" element={<Index />} />
