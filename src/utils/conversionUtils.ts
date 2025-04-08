@@ -179,18 +179,18 @@ export const convert = (
   return toUnit.fromBase(baseValue);
 };
 
-// Format the output value to a reasonable number of decimal places
-export const formatValue = (value: number): string => {
+// Format the output value to a specified number of decimal places
+export const formatValue = (value: number, precision: number = 4): string => {
   if (Math.abs(value) >= 1e6) {
-    return value.toExponential(6);
+    return value.toExponential(precision);
   }
   
   if (Math.abs(value) < 0.000001 && value !== 0) {
-    return value.toExponential(6);
+    return value.toExponential(precision);
   }
   
-  // Maximum 10 significant digits, but trim trailing zeros
-  return parseFloat(value.toPrecision(10)).toString();
+  // Use the provided precision, defaulting to 4 if not specified
+  return value.toFixed(precision);
 };
 
 // Generate a unique ID for the conversion history
