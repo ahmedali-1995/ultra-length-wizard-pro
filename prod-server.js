@@ -36,6 +36,7 @@ if (typeof window === 'undefined') {
 
   // @ts-ignore - We're deliberately creating partial mock objects for SSR
   global.document = {
+    // Create a minimal HTMLElement-like object with the properties we need
     documentElement: {
       classList: {
         add: () => {},
@@ -53,7 +54,19 @@ if (typeof window === 'undefined') {
         values: () => [][Symbol.iterator](),
         toString: () => '',
         [Symbol.iterator]: () => [][Symbol.iterator]()
-      }
+      },
+      // Add minimum required HTMLElement properties
+      nodeName: 'HTML',
+      nodeType: 1,
+      tagName: 'HTML',
+      localName: 'html',
+      ownerDocument: {},
+      namespaceURI: 'http://www.w3.org/1999/xhtml',
+      getAttribute: () => null,
+      setAttribute: () => {},
+      hasAttribute: () => false,
+      removeAttribute: () => {},
+      style: {}
     }
   };
 }
