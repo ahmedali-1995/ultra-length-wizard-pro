@@ -9,6 +9,21 @@ import serveStatic from 'serve-static'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isProduction = process.env.NODE_ENV === 'production'
 
+// Set up global browser API mocks for server-side rendering
+global.window = global.window || {}
+global.document = global.document || {
+  documentElement: {
+    classList: {
+      add: () => {},
+      remove: () => {}
+    }
+  }
+}
+global.localStorage = global.localStorage || {
+  getItem: () => null,
+  setItem: () => null
+}
+
 // The manifest is generated after build
 const manifest = isProduction
   ? JSON.parse(

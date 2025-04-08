@@ -1,18 +1,22 @@
 
-import { useState, useEffect } from 'react';
+import * as React from "react";
 
 type Theme = 'light' | 'dark';
 
-export const useTheme = () => {
-  const [theme, setTheme] = useState<Theme>(() => {
+export function useTheme() {
+  const [theme, setTheme] = React.useState<Theme>('light');
+  
+  // Only access window/document in useEffect which runs client-side
+  React.useEffect(() => {
     // Check for stored preference or system preference
     const storedTheme = localStorage.getItem('theme') as Theme;
-    if (storedTheme) return storedTheme;
+    if (storedTheme) {
+      setTheme(storedTheme);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark ? 'dark' : 'light');
+    }
     
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
-
-  useEffect(() => {
     // Update document class when theme changes
     const root = window.document.documentElement;
     
