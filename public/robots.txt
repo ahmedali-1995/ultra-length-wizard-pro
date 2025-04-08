@@ -1,4 +1,12 @@
 
+User-agent: *
+Allow: /
+
+# Prevent crawling of non-essential URLs
+Disallow: /api/
+Disallow: /private/
+
+# Allow specific bots with improved access
 User-agent: Googlebot
 Allow: /
 
@@ -11,8 +19,5 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
-
+# Sitemap declaration
 Sitemap: https://ultralength.lovable.app/sitemap.xml
-

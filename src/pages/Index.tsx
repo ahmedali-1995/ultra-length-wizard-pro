@@ -1,5 +1,6 @@
 
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import UnitConverter from '@/components/UnitConverter';
 import Footer from '@/components/Footer';
@@ -69,6 +70,45 @@ const Index = () => {
                   </Card>
                 </TabsContent>
               </Tabs>
+            </section>
+            
+            <section className="mt-10 space-y-6 max-w-3xl mx-auto">
+              <h2 className="text-2xl font-bold tracking-tight">Our Specialized Conversion Tools</h2>
+              
+              <div className="grid gap-6 md:grid-cols-3">
+                <Link to="/length-converter" className="no-underline">
+                  <div className="p-4 border rounded-lg bg-card hover:shadow-lg transition-all">
+                    <h3 className="font-semibold mb-2">Length Converter</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Convert between meters, feet, miles, and more with precision.
+                    </p>
+                  </div>
+                </Link>
+                
+                <Link to="/area-converter" className="no-underline">
+                  <div className="p-4 border rounded-lg bg-card hover:shadow-lg transition-all">
+                    <h3 className="font-semibold mb-2">Area Converter</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Convert square meters, acres, hectares, and other area units.
+                    </p>
+                  </div>
+                </Link>
+                
+                <Link to="/volume-converter" className="no-underline">
+                  <div className="p-4 border rounded-lg bg-card hover:shadow-lg transition-all">
+                    <h3 className="font-semibold mb-2">Volume Converter</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Convert cubic meters, gallons, liters, and more volume units.
+                    </p>
+                  </div>
+                </Link>
+              </div>
+              
+              <div className="text-center mt-4">
+                <Link to="/common-conversions" className="text-primary hover:underline">
+                  View all common conversion tables →
+                </Link>
+              </div>
             </section>
             
             <section className="mt-10 space-y-6 max-w-3xl mx-auto">
@@ -159,6 +199,12 @@ const Index = () => {
                   </p>
                 </div>
               </div>
+              
+              <div className="text-center mt-6">
+                <Link to="/common-conversions#faq" className="text-primary hover:underline">
+                  See more frequently asked questions →
+                </Link>
+              </div>
             </section>
             
             {/* Common Conversion Table - Good for SEO */}
@@ -211,6 +257,12 @@ const Index = () => {
                     </tr>
                   </tbody>
                 </table>
+              </div>
+              
+              <div className="text-center mt-4">
+                <Link to="/common-conversions" className="text-primary hover:underline">
+                  View all conversion tables →
+                </Link>
               </div>
             </section>
           </div>
