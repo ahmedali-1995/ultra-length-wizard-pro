@@ -26,7 +26,7 @@ import { toast } from 'sonner';
 import { 
   ArrowRight, Maximize2, Minimize2, RefreshCcw, Info, 
   ArrowDown, ChevronUp, ChevronDown, Globe, Building, User,
-  Microscope, Mountain, Landmark, Galaxy, Map, Ruler,
+  Microscope, Mountain, Landmark, Star, Map, Ruler,
   Square, Box, Droplet, Home, ParkingCircle, Warehouse, Ship
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -121,7 +121,7 @@ const ConversionVisualizer: React.FC = () => {
   
   const getExampleIcon = (example: any, groupName: string) => {
     if (dimension === 'length') {
-      if (example.size > 1e9) return <Galaxy className="h-4 w-4 text-purple-500" />;
+      if (example.size > 1e9) return <Star className="h-4 w-4 text-purple-500" />;
       if (example.size > 1000) return <Globe className="h-4 w-4 text-blue-500" />;
       if (example.size > 0.01) return <Ruler className="h-4 w-4 text-green-500" />;
       return <Microscope className="h-4 w-4 text-amber-500" />;
@@ -134,7 +134,7 @@ const ConversionVisualizer: React.FC = () => {
     }
     
     if (dimension === 'volume') {
-      if (example.size > 1e9) return <Galaxy className="h-4 w-4 text-purple-500" />;
+      if (example.size > 1e9) return <Star className="h-4 w-4 text-purple-500" />;
       if (example.size > 100) return <Droplet className="h-4 w-4 text-blue-500" />;
       if (example.size > 0.01) return <Box className="h-4 w-4 text-amber-500" />;
       return <Droplet className="h-4 w-4 text-cyan-500 transform scale-50" />;
@@ -146,7 +146,7 @@ const ConversionVisualizer: React.FC = () => {
   const getGroupIcon = (groupName: string) => {
     switch (groupName) {
       case "Astronomical":
-        return <Galaxy className="h-5 w-5 mr-2 text-purple-500" />;
+        return <Star className="h-5 w-5 mr-2 text-purple-500" />;
       case "Geographic":
         return <Globe className="h-5 w-5 mr-2 text-blue-500" />;
       case "Human scale":
@@ -160,7 +160,7 @@ const ConversionVisualizer: React.FC = () => {
       case "Small areas":
         return <Square className="h-5 w-5 mr-2 text-cyan-500" />;
       case "Massive volumes":
-        return <Galaxy className="h-5 w-5 mr-2 text-purple-500" />;
+        return <Star className="h-5 w-5 mr-2 text-purple-500" />;
       case "Large volumes":
         return <Ship className="h-5 w-5 mr-2 text-blue-500" />;
       case "Medium volumes":
@@ -647,137 +647,4 @@ const ConversionVisualizer: React.FC = () => {
                                 return (
                                   <div 
                                     key={example.name}
-                                    className={`flex items-center justify-between p-2 rounded-md ${
-                                      isClosest ? 'bg-primary/10 border-l-4 border-primary' : 'bg-background'
-                                    }`}
-                                  >
-                                    <div className="flex items-center gap-2 flex-1">
-                                      {getExampleIcon(example, group.name)}
-                                      <div>
-                                        <div className="font-medium text-sm">{example.name}</div>
-                                        <div className="text-xs text-muted-foreground">{example.description}</div>
-                                      </div>
-                                    </div>
-                                    <div className="text-right font-mono text-xs whitespace-nowrap">
-                                      {example.formattedSize} {getUnitAbbreviation(fromUnit)}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                {dimension === 'length' && (
-                  <>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <Microscope className="h-4 w-4 mr-2 text-amber-500" />
-                      <div>
-                        <div className="font-medium">Microscopic</div>
-                        <div className="text-muted-foreground">Atoms, molecules, cells</div>
-                      </div>
-                    </div>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <User className="h-4 w-4 mr-2 text-green-500" />
-                      <div>
-                        <div className="font-medium">Human scale</div>
-                        <div className="text-muted-foreground">Everyday objects</div>
-                      </div>
-                    </div>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <Mountain className="h-4 w-4 mr-2 text-blue-500" />
-                      <div>
-                        <div className="font-medium">Geographic</div>
-                        <div className="text-muted-foreground">Natural features</div>
-                      </div>
-                    </div>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <Galaxy className="h-4 w-4 mr-2 text-purple-500" />
-                      <div>
-                        <div className="font-medium">Astronomical</div>
-                        <div className="text-muted-foreground">Space, universe</div>
-                      </div>
-                    </div>
-                  </>
-                )}
-                
-                {dimension === 'area' && (
-                  <>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <Square className="h-4 w-4 mr-2 text-cyan-500" />
-                      <div>
-                        <div className="font-medium">Small areas</div>
-                        <div className="text-muted-foreground">Cards, screens</div>
-                      </div>
-                    </div>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <ParkingCircle className="h-4 w-4 mr-2 text-green-500" />
-                      <div>
-                        <div className="font-medium">Medium areas</div>
-                        <div className="text-muted-foreground">Rooms, courts</div>
-                      </div>
-                    </div>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <Building className="h-4 w-4 mr-2 text-slate-500" />
-                      <div>
-                        <div className="font-medium">Large areas</div>
-                        <div className="text-muted-foreground">Parks, cities</div>
-                      </div>
-                    </div>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <Map className="h-4 w-4 mr-2 text-blue-500" />
-                      <div>
-                        <div className="font-medium">Massive areas</div>
-                        <div className="text-muted-foreground">Countries, planets</div>
-                      </div>
-                    </div>
-                  </>
-                )}
-                
-                {dimension === 'volume' && (
-                  <>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <Droplet className="h-4 w-4 mr-2 text-cyan-500 transform scale-75" />
-                      <div>
-                        <div className="font-medium">Small volumes</div>
-                        <div className="text-muted-foreground">Drops, containers</div>
-                      </div>
-                    </div>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <Box className="h-4 w-4 mr-2 text-amber-500" />
-                      <div>
-                        <div className="font-medium">Medium volumes</div>
-                        <div className="text-muted-foreground">Appliances, rooms</div>
-                      </div>
-                    </div>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <Warehouse className="h-4 w-4 mr-2 text-blue-500" />
-                      <div>
-                        <div className="font-medium">Large volumes</div>
-                        <div className="text-muted-foreground">Lakes, buildings</div>
-                      </div>
-                    </div>
-                    <div className="p-2 bg-background rounded-md flex items-center">
-                      <Galaxy className="h-4 w-4 mr-2 text-purple-500" />
-                      <div>
-                        <div className="font-medium">Massive volumes</div>
-                        <div className="text-muted-foreground">Oceans, planets</div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default ConversionVisualizer;
+                                    className={`flex items-center justify-between p-2 rounded-
