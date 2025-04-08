@@ -19,6 +19,7 @@ export function useTheme() {
       if (storedTheme) {
         setTheme(storedTheme);
       } else if (
+        typeof window !== 'undefined' &&
         window.matchMedia && 
         window.matchMedia('(prefers-color-scheme: dark)').matches
       ) {
@@ -35,14 +36,16 @@ export function useTheme() {
     if (!mounted) return;
     
     try {
-      const root = document.documentElement;
-      if (theme === 'dark') {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
+      if (typeof document !== 'undefined') {
+        const root = document.documentElement;
+        if (theme === 'dark') {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+        
+        localStorage.setItem('theme', theme);
       }
-      
-      localStorage.setItem('theme', theme);
     } catch (e) {
       // Handle potential DOM or localStorage errors
       console.error("Error setting theme:", e);

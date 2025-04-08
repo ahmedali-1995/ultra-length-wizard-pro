@@ -6,8 +6,8 @@ import { renderToString } from 'react-dom/server';
 
 export function render(url: string) {
   try {
-    // Render the app with minimal server configuration
-    // No browser APIs are mocked to avoid hydration mismatches
+    // Create a simplified version of the app for server rendering
+    // that minimizes client/server differences
     const html = renderToString(
       <StaticRouter location={url}>
         <App />

@@ -12,7 +12,7 @@ export const ClientOnlySonner = () => {
     setIsMounted(true);
   }, []);
 
-  // Don't render anything during SSR
+  // Don't render anything during SSR or initial hydration
   if (!isMounted) return null;
   
   return <Toaster position="bottom-right" className="toaster group" />;

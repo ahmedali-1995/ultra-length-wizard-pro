@@ -7,10 +7,11 @@ export const ClientOnlyToaster = () => {
   const [isMounted, setIsMounted] = React.useState(false);
 
   React.useEffect(() => {
+    // Only set mounted to true after component is mounted on the client
     setIsMounted(true);
   }, []);
 
-  // Don't render anything during SSR
+  // Don't render anything during SSR or initial hydration
   if (!isMounted) return null;
   
   return <Toaster position="bottom-right" />;

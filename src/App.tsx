@@ -12,7 +12,14 @@ import CommonConversions from "./pages/CommonConversions";
 import ClientOnlyToaster from "./components/ClientOnlyToaster";
 
 // Create the query client outside the component to avoid recreation
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Disable retries during SSR to prevent waterfall requests
+      retry: typeof window === 'undefined' ? false : 3,
+    },
+  },
+});
 
 const App = () => {
   // Use state to track client-side rendering
@@ -26,7 +33,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        {/* Only render Toaster when on the client */}
+        {/* Only render Toaster when on the client and fully mounted */}
         {isMounted && <ClientOnlyToaster />}
         
         <Routes>
